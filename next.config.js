@@ -1,12 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.css$/,
-      use: ['style-loader', 'css-loader'],
-    })
-    return config
-  },
+  // Next.js has built-in CSS support, no custom webpack needed
 }
 
 module.exports = nextConfig
