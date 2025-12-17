@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 export default async function Home() {
     const session = await getServerSession(authOptions)
-    
+
     if (session) {
         redirect('/dashboard')
     }
@@ -13,7 +13,7 @@ export default async function Home() {
     return (
         <Box bg="white">
             {/* Header com Gradiente e Transparência */}
-            <Box 
+            <Box
                 background="linear-gradient(90deg, rgba(255, 255, 255, 0.7) 0%, rgba(0, 38, 149, 0.7) 50%, rgba(29, 143, 242, 0.7) 100%)"
                 backdropFilter="blur(10px)"
                 py={4}
@@ -24,9 +24,9 @@ export default async function Home() {
             >
                 <Container maxW="7xl">
                     <HStack justify="space-between" align="center">
-                        <Image 
-                            src="/aria-logo-large.png" 
-                            alt="Aria Logo" 
+                        <Image
+                            src="/aria-logo-large.png"
+                            alt="Aria Logo"
                             h="60px"
                             w="auto"
                         />
@@ -38,7 +38,7 @@ export default async function Home() {
             </Box>
 
             {/* Hero com Banner ao Fundo */}
-            <Box 
+            <Box
                 position="relative"
                 display="flex"
                 alignItems="flex-start"
@@ -66,9 +66,9 @@ export default async function Home() {
 
                 {/* Logo Blue - Topo Esquerdo */}
                 <Box position="absolute" top={0} left={6} zIndex={1} display={{ base: "none", lg: "block" }}>
-                    <Image 
-                        src="/logo-blue-no-bg.webp" 
-                        alt="Logo Blue" 
+                    <Image
+                        src="/logo-blue-no-bg.webp"
+                        alt="Logo Blue"
                         w="750px"
                         h="auto"
                     />
@@ -76,9 +76,9 @@ export default async function Home() {
 
                 {/* Logo Blue - Embaixo Centralizado */}
                 <Box position="absolute" bottom="20px" left="50%" transform="translateX(calc(-50% + 300px))" zIndex={1} display={{ base: "none", lg: "block" }}>
-                    <Image 
-                        src="/logo-blue-no-bg.webp" 
-                        alt="Logo Blue" 
+                    <Image
+                        src="/logo-blue-no-bg.webp"
+                        alt="Logo Blue"
                         w="700px"
                         h="auto"
                     />
@@ -101,7 +101,7 @@ export default async function Home() {
             </Box>
 
             {/* O que é */}
-            <Box 
+            <Box
                 py={20}
                 position="relative"
                 minH="600px"
@@ -128,9 +128,9 @@ export default async function Home() {
 
                 {/* Logo Blue - Topo Esquerdo */}
                 <Box position="absolute" top="20px" left={6} zIndex={1} display={{ base: "none", lg: "block" }}>
-                    <Image 
-                        src="/logo-blue-no-bg.webp" 
-                        alt="Logo Blue" 
+                    <Image
+                        src="/logo-blue-no-bg.webp"
+                        alt="Logo Blue"
                         w="750px"
                         h="auto"
                     />
@@ -209,17 +209,17 @@ export default async function Home() {
 
                         <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={8}>
                             {[
-                                { 
-                                    title: "E-commerce", 
-                                    desc: "Tem uma loja online e não consegue responder a todas as dúvidas dos clientes? Deixe o assistente cuidar disso por você!" 
+                                {
+                                    title: "E-commerce",
+                                    desc: "Tem uma loja online e não consegue responder a todas as dúvidas dos clientes? Deixe o assistente cuidar disso por você!"
                                 },
-                                { 
-                                    title: "Negócios locais", 
-                                    desc: "Tem um pequeno negócio e precisa de uma ajudinha para responder seus clientes com mais agilidade e eficiência? Deixe que o assistente de IA cuide disso por você." 
+                                {
+                                    title: "Negócios locais",
+                                    desc: "Tem um pequeno negócio e precisa de uma ajudinha para responder seus clientes com mais agilidade e eficiência? Deixe que o assistente de IA cuide disso por você."
                                 },
-                                { 
-                                    title: "Clínicas", 
-                                    desc: "Esclarece dúvidas sobre horários de atendimento, prazos e preços de forma humanizada, rápida e eficiente." 
+                                {
+                                    title: "Clínicas",
+                                    desc: "Esclarece dúvidas sobre horários de atendimento, prazos e preços de forma humanizada, rápida e eficiente."
                                 },
                             ].map((item, i) => (
                                 <Card key={i} bg="white" borderRadius="xl" shadow="md">
@@ -259,9 +259,9 @@ export default async function Home() {
                     <VStack spacing={8} align={{ base: "center", md: "flex-start" }}>
                         <HStack spacing={16} justify="space-between" align="flex-start" w="100%" display={{ base: "none", md: "flex" }}>
                             <VStack align="start" spacing={4}>
-                                <Image 
-                                    src="/logo-white-no-bg.png" 
-                                    alt="Aria Logo" 
+                                <Image
+                                    src="/logo-white-no-bg.png"
+                                    alt="Aria Logo"
                                     h="50px"
                                     w="auto"
                                 />
@@ -276,9 +276,9 @@ export default async function Home() {
                         </HStack>
 
                         <VStack spacing={6} w="100%" display={{ base: "flex", md: "none" }} align="center" textAlign="center">
-                            <Image 
-                                src="/logo-white-no-bg.png" 
-                                alt="Aria Logo" 
+                            <Image
+                                src="/logo-white-no-bg.png"
+                                alt="Aria Logo"
                                 h="50px"
                                 w="auto"
                             />
