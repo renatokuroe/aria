@@ -2,11 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Box, Button, VStack, Heading, Text, Image, Spinner, useToast, Alert, AlertIcon } from '@chakra-ui/react'
+import { Box, Button, VStack, Heading, Text, Image, Spinner, Alert, AlertIcon } from '@chakra-ui/react'
 
 export default function QRReader() {
     const router = useRouter()
-    const toast = useToast()
     const [loading, setLoading] = useState(false)
     const [qrData, setQrData] = useState<string | null>(null)
     const [isConnected, setIsConnected] = useState(false)
@@ -27,7 +26,6 @@ export default function QRReader() {
 
             if (!res.ok) {
                 console.warn('[qr/read] Error response:', data?.error || data?.message)
-                toast({ title: 'Erro', description: data?.error || data?.message || 'Falha ao obter QR', status: 'error' })
                 return
             }
 
@@ -88,10 +86,8 @@ export default function QRReader() {
 
             // Se não encontrou QR, provavelmente está conectado
             setIsConnected(true)
-            toast({ title: 'Instância já conectada', description: vendorMessage || 'Esta instância já está conectada a um dispositivo. Desconecte antes de gerar novo QR.', status: 'info' })
         } catch (err: any) {
             console.error('[qr/read] Exception:', err?.message)
-            toast({ title: 'Erro', description: err?.message || 'Erro desconhecido', status: 'error' })
         } finally {
             setLoading(false)
         }
