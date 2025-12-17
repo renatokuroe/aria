@@ -2,27 +2,36 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Box, Button, VStack, Heading, Text, Image, Spinner, useToast } from '@chakra-ui/react'
+import { Box, Button, VStack, Heading, Text, Image, Spinner, useToast, Alert, AlertIcon } from '@chakra-ui/react'
 
 export default function QRReader() {
     const router = useRouter()
     const toast = useToast()
     const [loading, setLoading] = useState(false)
     const [qrData, setQrData] = useState<string | null>(null)
+    const [isConnected, setIsConnected] = useState(false)
 
     async function fetchQr() {
         setLoading(true)
         setQrData(null)
+        setIsConnected(false)
         try {
+            console.log('[qr/read] Fetching QR code...')
             const res = await fetch('/api/evolution/qr', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
             const data = await res.json().catch(() => ({}))
+
+            console.log('[qr/read] Response status:', res.status)
+            console.log('[qr/read] Response ok:', res.ok)
+            console.log('[qr/read] Response keys:', data ? Object.keys(data) : [])
+            console.log('[qr/read] Full response:', JSON.stringify(data).slice(0, 500))
+
             if (!res.ok) {
-                toast({ title: 'Erro', description: data?.error || 'Falha ao obter QR', status: 'error' })
+                console.warn('[qr/read] Error response:', data?.error || data?.message)
+                toast({ title: 'Erro', description: data?.error || data?.message || 'Falha ao obter QR', status: 'error' })
                 return
             }
 
-            // prefer dataUri, then base64, then raw.qr
-            const qrCandidate =
+            let qrCandidate =
                 data?.qrDataUri ||
                 data?.qr?.dataUri ||
                 data?.qrBase64 ||
@@ -34,21 +43,17 @@ export default function QRReader() {
                 (typeof data?.qr === 'string' ? data.qr : null)
 
             if (qrCandidate) {
+                console.log('[qr/read] Found QR candidate')
                 setQrData(qrCandidate)
                 return
             }
 
-            // try to find any base64-like string inside the response
-            function looksLikeBase64(s: string) {
-                const t = s.replace(/\s+/g, '')
-                return /^[A-Za-z0-9+/=]+$/.test(t) && t.length >= 40 && (t.includes('=') || t.length % 4 === 0)
-            }
             function findBase64(obj: any): string | null {
                 if (!obj) return null
                 if (typeof obj === 'string') {
                     const t = obj.trim()
                     if (t.startsWith('data:image')) return t
-                    if (looksLikeBase64(t)) return t
+                    if (/^[A-Za-z0-9+/=]{40,}$/.test(t.replace(/\s+/g, ''))) return t
                     return null
                 }
                 if (Array.isArray(obj)) {
@@ -59,22 +64,33 @@ export default function QRReader() {
                 }
                 if (typeof obj === 'object') {
                     for (const k of Object.keys(obj)) {
-                        const f = findBase64(obj[k])
-                        if (f) return f
+                        try {
+                            const f = findBase64(obj[k])
+                            if (f) return f
+                        } catch (e) {
+                            // ignore
+                        }
                     }
                 }
                 return null
             }
-            const fallback = findBase64(data.qr || data)
+
+            const fallback = findBase64(data)
             if (fallback) {
+                console.log('[qr/read] Found via fallback scan')
                 setQrData(fallback)
                 return
             }
 
             const vendorMessage = data?.message || data?.qr?.raw?.message || data?.raw?.message
-            if (vendorMessage) toast({ title: 'Sem QR', description: vendorMessage || 'Resposta não continha QR', status: 'warning' })
-            return
+            console.warn('[qr/read] No QR found. Vendor message:', vendorMessage)
+            console.warn('[qr/read] Full payload:', JSON.stringify(data, null, 2).slice(0, 2000))
+            
+            // Se não encontrou QR, provavelmente está conectado
+            setIsConnected(true)
+            toast({ title: 'Instância já conectada', description: vendorMessage || 'Esta instância já está conectada a um dispositivo. Desconecte antes de gerar novo QR.', status: 'info' })
         } catch (err: any) {
+            console.error('[qr/read] Exception:', err?.message)
             toast({ title: 'Erro', description: err?.message || 'Erro desconhecido', status: 'error' })
         } finally {
             setLoading(false)
@@ -83,7 +99,6 @@ export default function QRReader() {
 
     useEffect(() => {
         fetchQr()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const imageSrc = useMemo(() => {
@@ -91,26 +106,20 @@ export default function QRReader() {
             if (!s) return null
             const trimmed = s.trim()
             if (trimmed.startsWith('data:image')) return trimmed
-            // if it contains 'base64,' extract part after it
             const base64Index = trimmed.indexOf('base64,')
             let candidate = base64Index >= 0 ? trimmed.slice(base64Index + 'base64,'.length) : trimmed
-            // remove whitespace/newlines
             candidate = candidate.replace(/\s+/g, '')
-            // find longest contiguous run of base64-like chars
             const matches = candidate.match(/[A-Za-z0-9+/=]{40,}/g)
             if (matches && matches.length) {
                 const longest = matches.reduce((a, b) => (a.length >= b.length ? a : b))
                 return `data:image/png;base64,${longest}`
             }
-            // fallback: if whole candidate looks base64-ish
             if (/^[A-Za-z0-9+/=]+$/.test(candidate) && candidate.length >= 40) return `data:image/png;base64,${candidate}`
             return null
         }
 
-        // try qrData first
         const fromQrData = extractBase64(qrData)
         if (fromQrData) return fromQrData
-
         return null
     }, [qrData])
 
@@ -118,9 +127,25 @@ export default function QRReader() {
         <Box p={8} maxW="md" mx="auto">
             <VStack spacing={4}>
                 <Heading size="md">Ler / Regenerar QR</Heading>
-                <Text>Regenerate o QR Code para sua instância (pode ser necessário quando o QR expira).</Text>
+                <Text>Regenere o QR Code para sua instância (pode ser necessário quando o QR expira).</Text>
 
                 {loading && <Spinner />}
+
+                {isConnected && !qrData && (
+                    <Alert status="info" variant="left-accent">
+                        <AlertIcon />
+                        <VStack align="flex-start" spacing={2}>
+                            <Text fontWeight="bold">Instância já conectada</Text>
+                            <Text fontSize="sm">
+                                Esta instância já está conectada a um dispositivo WhatsApp. 
+                                Para gerar um novo QR Code, você precisa desconectar primeiro.
+                            </Text>
+                            <Text fontSize="xs" mt={2}>
+                                Acesse o n8n-panel e desconecte a instância antes de tentar novamente.
+                            </Text>
+                        </VStack>
+                    </Alert>
+                )}
 
                 {qrData ? (
                     <Box textAlign="center" mt={4}>
@@ -129,7 +154,7 @@ export default function QRReader() {
                             <Image src={imageSrc} alt="qr" mx="auto" />
                         ) : (
                             <Box bg="white" display="inline-block" p={4}>
-                                <pre style={{ whiteSpace: 'pre-wrap' }}>{qrData}</pre>
+                                <pre style={{ whiteSpace: 'pre-wrap', maxWidth: '400px' }}>{qrData.slice(0, 200)}</pre>
                             </Box>
                         )}
 
@@ -140,7 +165,7 @@ export default function QRReader() {
                 ) : null}
 
                 <VStack spacing={2} mt={4}>
-                    <Button onClick={() => fetchQr()} colorScheme="blue">Regenerar QR</Button>
+                    <Button onClick={() => fetchQr()} colorScheme="blue" isLoading={loading}>Regenerar QR</Button>
                     <Button variant="ghost" onClick={() => router.push('/dashboard')}>Voltar</Button>
                 </VStack>
 

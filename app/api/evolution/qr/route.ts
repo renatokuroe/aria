@@ -19,6 +19,7 @@ export async function POST(req: Request) {
 
     async function callOp(operation: string, extra: any = {}) {
         const body = { operation, instanceName, ...extra }
+        console.log('[evo:qr] Calling operation:', operation, 'instanceName:', instanceName)
         const res = await fetch(BASE, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': `${apiKey}` }, body: JSON.stringify(body) })
         let json
         try {
@@ -26,16 +27,25 @@ export async function POST(req: Request) {
         } catch (e) {
             json = { status: res.status }
         }
+        console.log('[evo:qr] Operation response status:', res.status)
+        console.log('[evo:qr] Operation response:', JSON.stringify(json).slice(0, 500))
         if (!res.ok) throw new Error(json?.error || `Operation ${operation} failed`)
         return json
     }
 
     try {
-        // Single attempt: GET_QR_CODE once
+        console.log('[evo:qr] Starting GET_QR_CODE...')
         const qr = await callOp('GET_QR_CODE')
-        // debug: log small sample/length to help trace whether vendor returned data
-        // eslint-disable-next-line no-console
-        console.info('[evo] GET_QR_CODE called - sampleLen=', JSON.stringify(qr || '').length)
+        console.log('[evo:qr] Received QR response, keys:', Object.keys(qr || {}))
+        console.log('[evo:qr] Full QR payload:', JSON.stringify(qr).slice(0, 1000))
+
+        // Se retornar { instance, instanceName, state }, precisa chamar novamente
+        if (qr?.instance && !qr?.base64 && !qr?.qr && !qr?.qrBase64) {
+            console.log('[evo:qr] Instance info returned, fetching QR again...')
+            const qr2 = await callOp('GET_QR_CODE')
+            console.log('[evo:qr] Second attempt:', JSON.stringify(qr2).slice(0, 1000))
+            // ...usar qr2 em vez de qr
+        }
 
         // normalize result (same logic used in /init)
         function looksLikeBase64(s: string) {
@@ -144,19 +154,15 @@ export async function POST(req: Request) {
             if (fromScan) {
                 base64 = fromScan.base64 || null
                 dataUri = fromScan.dataUri || null
-                // eslint-disable-next-line no-console
                 console.info('[evo] QR recovered from raw payload via scanner')
             }
         }
 
         if (!dataUri && !base64) {
-            // collect vendor message if present
             const vendorMessage = qr && typeof qr === 'object' ? (qr.raw?.message || qr.message || qr.raw?.status || null) : null
             try {
-                // eslint-disable-next-line no-console
                 console.info('[evo] QR normalized { hasDataUri: false, hasBase64: false }')
-                // eslint-disable-next-line no-console
-                console.info('[evo] QR raw sample:', JSON.stringify(qr, Object.keys(qr || {}).slice(0, 20), 2).slice(0, 4000))
+                console.info('[evo] QR raw full payload:', JSON.stringify(qr || {}, null, 2).slice(0, 4000))
             } catch (e) {
                 // ignore
             }
@@ -166,6 +172,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ ok: true, qr: { dataUri, base64, raw: qr }, qrDataUri: dataUri, qrBase64: base64 })
     } catch (err: any) {
+        console.error('[evo:qr] Error:', err?.message)
         return NextResponse.json({ error: err?.message || 'Error from EVO API' }, { status: 502 })
     }
 }
