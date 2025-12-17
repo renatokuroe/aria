@@ -85,7 +85,7 @@ export default function QRReader() {
             const vendorMessage = data?.message || data?.qr?.raw?.message || data?.raw?.message
             console.warn('[qr/read] No QR found. Vendor message:', vendorMessage)
             console.warn('[qr/read] Full payload:', JSON.stringify(data, null, 2).slice(0, 2000))
-            
+
             // Se não encontrou QR, provavelmente está conectado
             setIsConnected(true)
             toast({ title: 'Instância já conectada', description: vendorMessage || 'Esta instância já está conectada a um dispositivo. Desconecte antes de gerar novo QR.', status: 'info' })
@@ -137,11 +137,8 @@ export default function QRReader() {
                         <VStack align="flex-start" spacing={2}>
                             <Text fontWeight="bold">Instância já conectada</Text>
                             <Text fontSize="sm">
-                                Esta instância já está conectada a um dispositivo WhatsApp. 
+                                Esta instância já está conectada a um dispositivo WhatsApp.
                                 Para gerar um novo QR Code, você precisa desconectar primeiro.
-                            </Text>
-                            <Text fontSize="xs" mt={2}>
-                                Acesse o n8n-panel e desconecte a instância antes de tentar novamente.
                             </Text>
                         </VStack>
                     </Alert>
