@@ -122,8 +122,8 @@ export default function QRReader() {
     return (
         <Box p={8} maxW="md" mx="auto">
             <VStack spacing={4}>
-                <Heading size="md">Ler / Regenerar QR</Heading>
-                <Text>Regenere o QR Code para sua instância (pode ser necessário quando o QR expira).</Text>
+                <Heading size="md">Escanear QR Code</Heading>
+                <Text>Refaça a leitura do QR Code para dar acesso à IA (pode ser necessário quando o QR code expira).</Text>
 
                 {loading && <Spinner />}
 
@@ -158,7 +158,7 @@ export default function QRReader() {
                 ) : null}
 
                 <VStack spacing={2} mt={4}>
-                    <Button onClick={() => fetchQr()} colorScheme="blue" isLoading={loading}>Regenerar QR</Button>
+                    <Button onClick={() => fetchQr()} colorScheme="blue" isLoading={loading}>Atualizar QR Code</Button>
                     <Button variant="ghost" onClick={() => router.push('/dashboard')}>Voltar</Button>
                 </VStack>
 
