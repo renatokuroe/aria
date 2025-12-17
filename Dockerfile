@@ -9,7 +9,6 @@ RUN npm ci
 COPY .next ./.next
 COPY public ./public
 COPY prisma ./prisma
-COPY node_modules/.prisma ./node_modules/.prisma
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
