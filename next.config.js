@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Use dev mode - more lightweight than production build
+  output: 'standalone',
 }
 
 module.exports = nextConfig
