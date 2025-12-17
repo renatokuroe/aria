@@ -144,14 +144,14 @@ export default function QRReader() {
                     <Box textAlign="center" mt={4}>
                         <Text mb={2}>QR Code</Text>
                         {imageSrc ? (
-                            <Image src={imageSrc} alt="qr" mx="auto" />
+                            <Image src={imageSrc} alt="qr" mx="auto" maxW="350px" h="350px" />
                         ) : (
-                            <Box bg="white" display="inline-block" p={4}>
-                                <pre style={{ whiteSpace: 'pre-wrap', maxWidth: '400px' }}>{qrData.slice(0, 200)}</pre>
+                            <Box bg="white" display="inline-block" p={4} minW="350px" minH="350px">
+                                <pre style={{ whiteSpace: 'pre-wrap', maxWidth: '330px' }}>{qrData.slice(0, 200)}</pre>
                             </Box>
                         )}
 
-                        <Button mt={4} colorScheme="green" onClick={() => router.push('/dashboard')}>
+                        <Button mt={4} colorScheme="brand" onClick={() => router.push('/dashboard')}>
                             Pronto! Já escaneei o QR Code.
                         </Button>
                     </Box>

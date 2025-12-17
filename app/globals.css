@@ -1,5 +1,11 @@
 :root {
-    --chakra-ui-focus-ring: #3182ce;
+    --chakra-ui-focus-ring: #1D8FF2;
+    --color-brand-600: #1a7acb;
+    --color-brand-500: #1D8FF2;
+    --color-title-900: #002695;
+    --color-dark-900: #0a0a0a;
+    --color-dark-100: #e8e8e8;
+    --font-space-grotesk: 'Space Grotesk', sans-serif;
 }
 
 html,
@@ -10,5 +16,35 @@ body,
 
 body {
     margin: 0;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    font-family: var(--font-space-grotesk);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Gradientes da landing */
+.gradient-brand {
+    background: linear-gradient(135deg, #1D8FF2 0%, #1a7acb 100%);
+}
+
+.gradient-light {
+    background: linear-gradient(135deg, rgba(29, 143, 242, 0.1) 0%, rgba(26, 122, 203, 0.05) 100%);
+}
+
+/* Smooth transitions */
+button,
+a,
+input,
+textarea,
+select {
+    transition: all 0.3s ease;
+}
+
+/* Focus styles */
+:focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 2px;
 }
