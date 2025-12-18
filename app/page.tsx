@@ -16,18 +16,22 @@ export default async function Home() {
             <Box
                 background="linear-gradient(90deg, rgba(255, 255, 255, 0.7) 0%, rgba(27, 94, 32, 0.7) 50%, rgba(76, 175, 80, 0.7) 100%)"
                 backdropFilter="blur(10px)"
-                py={4}
+                py={0}
                 px={6}
                 boxShadow="md"
-                position="relative"
+                position="fixed"
+                top={0}
+                left={0}
+                right={0}
                 zIndex={20}
+                h="60px"
             >
-                <Container maxW="7xl">
-                    <HStack justify="space-between" align="center">
+                <Container maxW="7xl" h="100%">
+                    <HStack justify="space-between" align="center" h="100%">
                         <Image
                             src="/logo-full-green-no-bg.webp"
                             alt="Aria Logo"
-                            h="60px"
+                            h="96px"
                             w="auto"
                         />
                         <Button as="a" href="/auth/login" colorScheme="brand" size="md">
@@ -46,7 +50,7 @@ export default async function Home() {
                 marginLeft="calc(-50vw + 50%)"
                 h={{ base: "600px", md: "1200px" }}
                 pt={8}
-                mt={-16}
+                mt={{ base: "60px", md: "60px" }}
             >
                 {/* Banner Background */}
                 <Box
