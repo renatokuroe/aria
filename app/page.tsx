@@ -14,7 +14,7 @@ export default async function Home() {
         <Box bg="white">
             {/* Header com Gradiente e Transparência */}
             <Box
-                background="linear-gradient(90deg, rgba(255, 255, 255, 0.7) 0%, rgba(0, 38, 149, 0.7) 50%, rgba(29, 143, 242, 0.7) 100%)"
+                background="linear-gradient(90deg, rgba(255, 255, 255, 0.7) 0%, rgba(27, 94, 32, 0.7) 50%, rgba(76, 175, 80, 0.7) 100%)"
                 backdropFilter="blur(10px)"
                 py={4}
                 px={6}
@@ -25,7 +25,7 @@ export default async function Home() {
                 <Container maxW="7xl">
                     <HStack justify="space-between" align="center">
                         <Image
-                            src="/aria-logo-large.png"
+                            src="/logo-full-green-no-bg.webp"
                             alt="Aria Logo"
                             h="60px"
                             w="auto"
@@ -54,7 +54,7 @@ export default async function Home() {
                     top={0}
                     right={0}
                     bottom={0}
-                    backgroundImage="url('/bg-main.webp')"
+                    backgroundImage="url('/bg-main-green.webp')"
                     backgroundPosition="right"
                     backgroundRepeat="no-repeat"
                     backgroundSize="contain"
@@ -67,7 +67,7 @@ export default async function Home() {
                 {/* Logo Blue - Topo Esquerdo */}
                 <Box position="absolute" top={0} left={6} zIndex={1} display={{ base: "none", lg: "block" }}>
                     <Image
-                        src="/logo-blue-no-bg.webp"
+                        src="/logo-green-no-bg.webp"
                         alt="Logo Blue"
                         w="750px"
                         h="auto"
@@ -77,7 +77,7 @@ export default async function Home() {
                 {/* Logo Blue - Embaixo Centralizado */}
                 <Box position="absolute" bottom="20px" left="50%" transform="translateX(calc(-50% + 300px))" zIndex={1} display={{ base: "none", lg: "block" }}>
                     <Image
-                        src="/logo-blue-no-bg.webp"
+                        src="/logo-green-no-bg.webp"
                         alt="Logo Blue"
                         w="700px"
                         h="auto"
@@ -107,7 +107,7 @@ export default async function Home() {
                 minH="600px"
                 display="flex"
                 alignItems="center"
-                bg="#e6f2ff"
+                bg="#e8f5e9"
                 w="100vw"
                 marginLeft="calc(-50vw + 50%)"
             >
@@ -129,7 +129,7 @@ export default async function Home() {
                 {/* Logo Blue - Topo Esquerdo */}
                 <Box position="absolute" top="20px" left={6} zIndex={1} display={{ base: "none", lg: "block" }}>
                     <Image
-                        src="/logo-blue-no-bg.webp"
+                        src="/logo-green-no-bg.webp"
                         alt="Logo Blue"
                         w="750px"
                         h="auto"
@@ -140,7 +140,7 @@ export default async function Home() {
                 <Container maxW="7xl" position="relative" zIndex={2}>
                     <VStack spacing={12}>
                         <VStack spacing={4} textAlign="center" maxW={{ base: "100%", lg: "50%" }} mx="auto">
-                            <Heading size="4xl" color="title.900">
+                            <Heading size="2xl" color="title.900">
                                 O que é um Agente de IA para WhatsApp?
                             </Heading>
                             <Text fontSize="2xl" color="gray.600">

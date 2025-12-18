@@ -1,8 +1,8 @@
 :root {
-    --chakra-ui-focus-ring: #1D8FF2;
-    --color-brand-600: #1a7acb;
-    --color-brand-500: #1D8FF2;
-    --color-title-900: #002695;
+    --chakra-ui-focus-ring: #4caf50;
+    --color-brand-600: #43a047;
+    --color-brand-500: #4caf50;
+    --color-title-900: #1b5e20;
     --color-dark-900: #0a0a0a;
     --color-dark-100: #e8e8e8;
     --font-space-grotesk: 'Space Grotesk', sans-serif;
@@ -27,11 +27,11 @@ body {
 
 /* Gradientes da landing */
 .gradient-brand {
-    background: linear-gradient(135deg, #1D8FF2 0%, #1a7acb 100%);
+    background: linear-gradient(135deg, #4caf50 0%, #43a047 100%);
 }
 
 .gradient-light {
-    background: linear-gradient(135deg, rgba(29, 143, 242, 0.1) 0%, rgba(26, 122, 203, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(67, 160, 71, 0.05) 100%);
 }
 
 /* Smooth transitions */

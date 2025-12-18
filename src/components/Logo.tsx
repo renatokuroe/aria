@@ -11,9 +11,9 @@ export default function Logo({ size = 'md', variant = 'blue' }: { size?: 'sm' | 
     let logoSrc: string
 
     if (size === 'xl') {
-        logoSrc = '/logo-large.png'
+        logoSrc = '/logo-full-green-no-bg.webp'
     } else {
-        logoSrc = variant === 'white' ? '/logo-white.png' : '/logo-blue.png'
+        logoSrc = variant === 'white' ? '/logo-white.png' : '/logo-green-no-bg.webp'
     }
 
     return (
