@@ -33,7 +33,7 @@ export default function DashboardPage() {
         {
             title: 'Créditos & Upgrade',
             description: 'Verifique seus créditos e planos',
-            href: '/dashboard/settings',
+            href: '/dashboard/credits',
             icon: '⭐',
         },
     ]
