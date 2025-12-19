@@ -104,38 +104,92 @@ export default function CreditsPage() {
                 console.log('Email utilizado:', emailWithoutAt)
 
                 // A API retorna um número direto
-                const count = typeof countData === 'number' ? countData : (countData.messageCount || countData.message_count || countData.count || 0)
+                let count = 0
+                if (countData === null || countData === undefined) {
+                    count = 0
+                } else if (typeof countData === 'number') {
+                    count = countData
+                } else if (typeof countData === 'string') {
+                    const parsed = parseInt(countData, 10)
+                    count = isNaN(parsed) ? 0 : parsed
+                } else {
+                    count = countData?.messageCount || countData?.message_count || countData?.count || 0
+                }
                 setMessageCount(count)
 
                 // Buscar plano atual
-                const planResponse = await fetch('https://n8n-panel.aria.social.br/webhook/manage', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        operation: 'GET_PLAN',
-                        apiKey: 'EvoApiKeySecreta2025',
-                        instanceName: emailWithoutAt,
-                    }),
-                })
+                try {
+                    const planResponse = await fetch('https://n8n-panel.aria.social.br/webhook/manage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            operation: 'GET_PLAN',
+                            apiKey: 'EvoApiKeySecreta2025',
+                            instanceName: emailWithoutAt,
+                        }),
+                    })
 
-                if (planResponse.ok) {
-                    const planData = await planResponse.json()
-                    console.log('Resposta GET_PLAN:', planData)
+                    if (planResponse.ok) {
+                        const planData = await planResponse.json()
+                        console.log('Resposta GET_PLAN (raw):', planData)
+                        console.log('Tipo de planData:', typeof planData)
+                        console.log('planData stringificado:', JSON.stringify(planData))
 
-                    // O plano é retornado como um número
-                    const plan = typeof planData === 'number' ? planData : (planData.plan || planData.Plan || planData.messageLimit || 100)
-                    setCurrentPlan(plan)
-                } else {
-                    // Se falhar em buscar o plano, determinar baseado na contagem
-                    if (count <= 100) setCurrentPlan(100)
-                    else if (count <= 1000) setCurrentPlan(1000)
-                    else if (count <= 10000) setCurrentPlan(10000)
-                    else setCurrentPlan(999999)
+                        // O plano é retornado como um número
+                        let plan = null
+                        if (planData === null || planData === undefined) {
+                            console.warn('GET_PLAN retornou null/undefined')
+                            plan = null
+                        } else if (typeof planData === 'number' && planData > 0) {
+                            plan = planData
+                            console.log('GET_PLAN retornou número:', plan)
+                        } else if (typeof planData === 'string' && planData.trim() !== '') {
+                            const parsed = parseInt(planData, 10)
+                            if (!isNaN(parsed) && parsed > 0) {
+                                plan = parsed
+                                console.log('GET_PLAN retornou string convertida:', plan)
+                            }
+                        } else if (typeof planData === 'object') {
+                            plan = planData?.plan || planData?.Plan || planData?.messageLimit || planData?.planLimit
+                            if (plan && plan > 0) {
+                                console.log('GET_PLAN retornou objeto com plan:', plan)
+                            } else {
+                                plan = null
+                            }
+                        }
+                        
+                        if (plan && plan > 0) {
+                            console.log('Plano definido com sucesso como:', plan)
+                            setCurrentPlan(plan)
+                        } else {
+                            console.warn('GET_PLAN retornou valor inválido, usando fallback')
+                            throw new Error('GET_PLAN retornou valor inválido')
+                        }
+                    } else {
+                        throw new Error('Falha ao buscar plano - status: ' + planResponse.status)
+                    }
+                } catch (planErr: any) {
+                    console.warn('Erro ao buscar plano via API, usando fallback:', planErr.message)
+                    // Fallback: determinar baseado na contagem
+                    console.log('Usando fallback com count:', count)
+                    if (count <= 100) {
+                        setCurrentPlan(100)
+                        console.log('Fallback: Free (count <= 100)')
+                    } else if (count <= 1000) {
+                        setCurrentPlan(1000)
+                        console.log('Fallback: Pro (count <= 1000)')
+                    } else if (count <= 10000) {
+                        setCurrentPlan(10000)
+                        console.log('Fallback: Business (count <= 10000)')
+                    } else {
+                        setCurrentPlan(999999)
+                        console.log('Fallback: Enterprise (count > 10000)')
+                    }
                 }
             } catch (err: any) {
-                console.error('Erro:', err)
+                console.error('Erro ao carregar dados:', err)
                 setError(err.message || 'Erro ao buscar dados')
             } finally {
                 setLoading(false)
