@@ -120,8 +120,8 @@ export default function QRReader() {
     }, [qrData])
 
     return (
-        <Box p={8} maxW="md" mx="auto">
-            <VStack spacing={4}>
+        <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg="white" py={12} px={6}>
+            <VStack spacing={4} maxW="md" w="full">
                 <Heading size="md">Escanear QR Code</Heading>
                 <Text>Refaça a leitura do QR Code para dar acesso à IA (pode ser necessário quando o QR code expira).</Text>
 
@@ -142,7 +142,6 @@ export default function QRReader() {
 
                 {qrData ? (
                     <Box textAlign="center" mt={4}>
-                        <Text mb={2}>QR Code</Text>
                         {imageSrc ? (
                             <Image src={imageSrc} alt="qr" mx="auto" maxW="350px" h="350px" />
                         ) : (
@@ -156,11 +155,6 @@ export default function QRReader() {
                         </Button>
                     </Box>
                 ) : null}
-
-                <VStack spacing={2} mt={4}>
-                    <Button onClick={() => fetchQr()} colorScheme="blue" isLoading={loading}>Atualizar QR Code</Button>
-                    <Button variant="ghost" onClick={() => router.push('/dashboard')}>Voltar</Button>
-                </VStack>
 
             </VStack>
         </Box>

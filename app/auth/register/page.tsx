@@ -15,7 +15,7 @@ export default function RegisterPage() {
 
     function validate() {
         if (!email || !email.includes('@')) return 'Email inválido'
-        if (!password || password.length < 8) return 'Senha precisa ter ao menos 8 caracteres'
+        if (!password || password.length < 6) return 'Senha precisa ter ao menos 6 caracteres'
         return null
     }
 

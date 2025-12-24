@@ -121,35 +121,47 @@ export default function SetupInstanceClient({ email }: { email: string }) {
     }, [qrData])
 
     return (
-        <Box p={8} maxW="md" mx="auto">
-            <VStack spacing={4} as="form" onSubmit={handleSubmit}>
-                <Heading size="md">Configurar Instância</Heading>
-                <Text>Usuário: {email}</Text>
+        <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg="white" py={12} px={6}>
+            {!qrData ? (
+                <VStack spacing={4} as="form" onSubmit={handleSubmit} maxW="md" w="full">
+                    <Heading size="md">Informe seu número de WhatsApp</Heading>
+                    <Text>Usuário: {email}</Text>
 
-                <Input as={InputMask} mask="(99) 99999-9999" value={phone} onChange={(e: any) => setPhone(e.target.value)} placeholder="(XX) XXXXX-XXXX" />
+                    <Input as={InputMask} mask="(99) 99999-9999" value={phone} onChange={(e: any) => setPhone(e.target.value)} placeholder="(XX) XXXXX-XXXX" />
 
-                <Button type="submit" colorScheme="blue" isLoading={loading}>Criar instância</Button>
+                    <Button type="submit" colorScheme="green" isLoading={loading}>Próximo</Button>
 
-                {loading && <Spinner />}
+                    {loading && <Spinner />}
+                </VStack>
+            ) : (
+                <VStack spacing={6} maxW="md" w="full" textAlign="center">
+                    <VStack spacing={3}>
+                        <Heading size="md">Escaneie o QR Code</Heading>
+                        <Text fontSize="sm" color="gray.600">
+                            Abra o WhatsApp no seu celular e escaneie o código abaixo usando a câmera ou o leitor de QR Code integrado no app.
+                        </Text>
+                    </VStack>
 
-                {qrData ? (
-                    <Box mt={4} textAlign="center">
-                        <Text mb={2}>QR Code</Text>
-                        {imageSrc ? (
-                            <Image src={imageSrc} alt="qr" mx="auto" />
-                        ) : (
-                            <div style={{ background: 'white', display: 'inline-block', padding: 8 }}>
-                                <QRCode value={qrData} />
-                            </div>
-                        )}
+                    {imageSrc ? (
+                        <Image src={imageSrc} alt="qr" mx="auto" />
+                    ) : (
+                        <div style={{ background: 'white', display: 'inline-block', padding: 8 }}>
+                            <QRCode value={qrData} />
+                        </div>
+                    )}
 
-                        {/* Button to continue once user scanned the QR */}
-                        <Button mt={4} colorScheme="green" onClick={() => router.push('/dashboard')}>
-                            Pronto! Já escaneei o QR Code.
-                        </Button>
-                    </Box>
-                ) : null}
-            </VStack>
+                    <VStack spacing={3} bg="green.50" p={4} borderRadius="md" w="full">
+                        <Heading size="sm" color="green.900">Para que serve?</Heading>
+                        <Text fontSize="sm" color="green.800">
+                            Ao escanear este QR Code, você conectará seu WhatsApp com o Aria. Isso permite que o assistente de IA receba e responda mensagens automaticamente em sua conta.
+                        </Text>
+                    </VStack>
+
+                    <Button colorScheme="green" w="full" onClick={() => router.push('/prompt/new')}>
+                        Pronto! Já escaneei o QR Code.
+                    </Button>
+                </VStack>
+            )}
         </Box>
     )
 }

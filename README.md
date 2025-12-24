@@ -83,7 +83,135 @@ aria/
 - Use variáveis de ambiente para credenciais
 - A chave `ADMIN_KEY` protege endpoints administrativos
 
-## 📝 Licença
+## � API Documentation
+
+### Base URL
+```
+https://n8n-panel.aria.social.br/webhook/manage
+```
+
+### Headers
+```
+Content-Type: application/json
+```
+
+### Operações Disponíveis
+
+#### 1. Criar Instância
+Cria uma nova instância para gerenciar um WhatsApp.
+
+```bash
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "operation": "CREATE_INSTANCE",
+    "apiKey": "YOUR_API_KEY",
+    "instanceName": "SEU_NOME_INSTANCIA",
+    "phoneNumber": "5511999999999"
+  }'
+```
+
+#### 2. Configurar Webhooks
+Define os webhooks para a instância.
+
+```bash
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "operation": "SET_WEBHOOKS",
+    "apiKey": "YOUR_API_KEY",
+    "instanceName": "SEU_NOME_INSTANCIA"
+  }'
+```
+
+#### 3. Obter QR Code
+Recupera o QR Code para conectar o WhatsApp.
+
+```bash
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "operation": "GET_QR_CODE",
+    "apiKey": "YOUR_API_KEY",
+    "instanceName": "SEU_NOME_INSTANCIA"
+  }'
+```
+
+#### 4. Definir Prompt (Sistema)
+Define o comportamento da IA para a instância.
+
+```bash
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "operation": "SET_PROMPT",
+    "apiKey": "YOUR_API_KEY",
+    "instanceName": "SEU_NOME_INSTANCIA",
+    "systemPrompt": "Você é um assistente de atendimento ao cliente educado e eficiente..."
+  }'
+```
+
+#### 5. Definir Prompt (Encodado)
+Para prompts complexos ou com caracteres especiais, use a versão encodada:
+
+```bash
+# Se você tiver 'jq' instalado
+SYSTEM_PROMPT_ENCODED=$(jq -Rs '.' prompt_temp.txt)
+
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d "{ \"operation\": \"SET_PROMPT\", \"apiKey\": \"YOUR_API_KEY\", \"instanceName\": \"SEU_NOME_INSTANCIA\", \"systemPrompt\": $SYSTEM_PROMPT_ENCODED }"
+```
+
+#### 6. Obter Contagem de Mensagens
+Recupera quantas mensagens foram processadas.
+
+```bash
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "operation": "GET_MESSAGE_COUNT",
+    "apiKey": "YOUR_API_KEY",
+    "instanceName": "SEU_NOME_INSTANCIA"
+  }'
+```
+
+#### 7. Obter Plano
+Recupera informações do plano atual da instância.
+
+```bash
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "operation": "GET_PLAN",
+    "apiKey": "YOUR_API_KEY",
+    "instanceName": "SEU_NOME_INSTANCIA"
+  }'
+```
+
+#### 8. Definir Plano
+Define o plano (limites) para a instância.
+
+```bash
+curl -X POST 'https://n8n-panel.aria.social.br/webhook/manage' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "operation": "SET_PLAN",
+    "apiKey": "YOUR_API_KEY",
+    "instanceName": "SEU_NOME_INSTANCIA",
+    "plan": "1000"
+  }'
+```
+
+### Parâmetros Comuns
+
+| Parâmetro | Tipo | Descrição |
+|-----------|------|-----------|
+| `operation` | string | Tipo de operação a executar |
+| `apiKey` | string | Chave de API para autenticação |
+| `instanceName` | string | Nome da instância (ID único) |
+
+## �📝 Licença
 
 MIT
 

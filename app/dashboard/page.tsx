@@ -19,16 +19,16 @@ export default function DashboardPage() {
 
     const menuItems = [
         {
-            title: 'Escanear QR Code',
-            description: 'Conecte seu WhatsApp ou gere novo QR',
-            href: '/qr/read',
-            icon: '📱',
-        },
-        {
             title: 'Instruções para IA',
             description: 'Configure os prompts e instruções da sua IA',
             href: '/prompt/new',
             icon: '🤖',
+        },
+        {
+            title: 'Escanear QR Code',
+            description: 'Conecte seu WhatsApp ou gere novo QR',
+            href: '/qr/read',
+            icon: '📱',
         },
         {
             title: 'Créditos & Upgrade',
@@ -55,9 +55,6 @@ export default function DashboardPage() {
                     </Heading>
                     <VStack spacing={2}>
                         <Heading size="2xl" color="title.900">Bem-vindo ao Aria</Heading>
-                        <Text fontSize="lg" color="gray.600">
-                            Olá, usuário
-                        </Text>
                     </VStack>
                 </VStack>
 
@@ -110,14 +107,7 @@ export default function DashboardPage() {
                         Precisa de ajuda? Entre em contato com nosso suporte
                     </Text>
                     <HStack spacing={4} justify="center">
-                        <Button
-                            as="a"
-                            href="https://wa.me/5543984590248?text=Olá, preciso de suporte"
-                            target="_blank"
-                            variant="ghost"
-                            size="sm"
-                            colorScheme="brand"
-                        >
+                        <Button variant="ghost" size="sm" colorScheme="brand">
                             Suporte
                         </Button>
                         <Button

@@ -10,8 +10,6 @@ export default async function Page() {
 
     return (
         <main style={{ padding: 24 }}>
-            <h2>Boas-vindas</h2>
-            <p>Precisamos configurar sua instância. Use seu número de telefone para começar.</p>
             <SetupInstanceClient email={email} />
         </main>
     )
