@@ -107,7 +107,7 @@ export default function DashboardPage() {
                         Precisa de ajuda? Entre em contato com nosso suporte
                     </Text>
                     <HStack spacing={4} justify="center">
-                        <Button variant="ghost" size="sm" colorScheme="brand">
+                        <Button as="a" href="https://wa.me/5543984590248" target="_blank" variant="ghost" size="sm" colorScheme="brand">
                             Suporte
                         </Button>
                         <Button
