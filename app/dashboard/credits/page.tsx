@@ -3,18 +3,35 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { Box, VStack, HStack, Heading, Text, Button, Card, CardBody, Spinner, useToast } from '@chakra-ui/react'
+import { Box, VStack, HStack, Heading, Text, Button, Card, CardBody, Spinner, useToast, useDisclosure } from '@chakra-ui/react'
 import Logo from '@/src/components/Logo'
+import PaymentModal from '@/src/components/PaymentModal'
+
+interface PlanConfig {
+    id: string
+    name: string
+    messages: number
+    price: number
+}
+
+const PLANS: PlanConfig[] = [
+    { id: '100', name: 'Free', messages: 100, price: 0 },
+    { id: '1000', name: 'Pro', messages: 1000, price: 19.9 },
+    { id: '10000', name: 'Business', messages: 10000, price: 49.9 },
+    { id: '999999', name: 'Enterprise', messages: 999999, price: 99.9 },
+]
 
 export default function CreditsPage() {
     const router = useRouter()
     const toast = useToast()
     const { data: session } = useSession()
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
     const [messageCount, setMessageCount] = useState<number | null>(null)
     const [currentPlan, setCurrentPlan] = useState<number | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const [upgradingPlan, setUpgradingPlan] = useState<string | null>(null)
+    const [selectedPlan, setSelectedPlan] = useState<PlanConfig | null>(null)
 
     // Função para determinar o plano baseado na contagem de mensagens
     function getPlanName(count: number | null): string {
@@ -25,14 +42,35 @@ export default function CreditsPage() {
         return 'Enterprise'
     }
 
-    // Função para fazer upgrade de plano
-    async function handleUpgradePlan(planMessages: number) {
+    // Função para abrir modal de pagamento
+    function handleOpenPaymentModal(plan: PlanConfig) {
+        if (!session?.user?.email) {
+            toast({
+                title: 'Erro',
+                description: 'Você precisa estar logado',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            })
+            return
+        }
+
+        if (plan.price === 0) {
+            // Para o plano free, fazer upgrade direto
+            handleUpgradeFree(plan)
+        } else {
+            // Para planos pagos, abrir modal
+            setSelectedPlan(plan)
+            onOpen()
+        }
+    }
+
+    // Fazer upgrade para plano free
+    async function handleUpgradeFree(plan: PlanConfig) {
         if (!session?.user?.email) return
 
         try {
-            setUpgradingPlan(String(planMessages))
             setError(null)
-
             const emailWithoutAt = session.user.email.replace('@', ' ')
 
             const response = await fetch('https://n8n-panel.aria.social.br/webhook/manage', {
@@ -44,7 +82,7 @@ export default function CreditsPage() {
                     operation: 'SET_PLAN',
                     apiKey: 'EvoApiKeySecreta2025',
                     instanceName: emailWithoutAt,
-                    plan: String(planMessages),
+                    plan: String(plan.messages),
                 }),
             })
 
@@ -52,10 +90,8 @@ export default function CreditsPage() {
                 throw new Error('Erro ao fazer upgrade do plano')
             }
 
-            // Atualizar o plano atual após o upgrade
-            setCurrentPlan(planMessages)
+            setCurrentPlan(plan.messages)
 
-            // Exibir toast de sucesso
             toast({
                 title: 'Plano atualizado com sucesso!',
                 status: 'success',
@@ -66,8 +102,47 @@ export default function CreditsPage() {
         } catch (err: any) {
             console.error('Erro:', err)
             setError(err.message || 'Erro ao fazer upgrade do plano')
-        } finally {
-            setUpgradingPlan(null)
+        }
+    }
+
+    // Callback quando pagamento é confirmado
+    async function handlePaymentSuccess() {
+        if (!session?.user?.email || !selectedPlan) return
+
+        try {
+            const emailWithoutAt = session.user.email.replace('@', ' ')
+
+            // Aguardar um pouco para o n8n processar
+            await new Promise(resolve => setTimeout(resolve, 2000))
+
+            const response = await fetch('https://n8n-panel.aria.social.br/webhook/manage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    operation: 'SET_PLAN',
+                    apiKey: 'EvoApiKeySecreta2025',
+                    instanceName: emailWithoutAt,
+                    plan: String(selectedPlan.messages),
+                }),
+            })
+
+            if (response.ok) {
+                setCurrentPlan(selectedPlan.messages)
+                setSelectedPlan(null)
+
+                toast({
+                    title: 'Pagamento confirmado!',
+                    description: 'Seu plano foi atualizado com sucesso.',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                    position: 'top-right',
+                })
+            }
+        } catch (err: any) {
+            console.error('Erro ao atualizar plano:', err)
         }
     }
 
@@ -159,7 +234,7 @@ export default function CreditsPage() {
                                 plan = null
                             }
                         }
-                        
+
                         if (plan && plan > 0) {
                             console.log('Plano definido com sucesso como:', plan)
                             setCurrentPlan(plan)
@@ -337,12 +412,11 @@ export default function CreditsPage() {
                                     <Button
                                         colorScheme="brand"
                                         size="sm"
-                                        onClick={() => handleUpgradePlan(100)}
-                                        isLoading={upgradingPlan === '100'}
-                                        isDisabled={upgradingPlan !== null || currentPlan === 100}
+                                        onClick={() => handleOpenPaymentModal(PLANS[0])}
+                                        isDisabled={currentPlan === 100}
                                         variant={currentPlan === 100 ? 'solid' : 'solid'}
                                     >
-                                        {currentPlan === 100 ? 'Ativo' : 'Fazer Upgrade'}
+                                        {currentPlan === 100 ? 'Ativo' : 'Contratar plano'}
                                     </Button>
                                 </HStack>
                             </CardBody>
@@ -378,12 +452,11 @@ export default function CreditsPage() {
                                     <Button
                                         colorScheme="brand"
                                         size="sm"
-                                        onClick={() => handleUpgradePlan(1000)}
-                                        isLoading={upgradingPlan === '1000'}
-                                        isDisabled={upgradingPlan !== null || currentPlan === 1000}
+                                        onClick={() => handleOpenPaymentModal(PLANS[1])}
+                                        isDisabled={currentPlan === 1000}
                                         variant={currentPlan === 1000 ? 'solid' : 'solid'}
                                     >
-                                        {currentPlan === 1000 ? 'Ativo' : 'Fazer Upgrade'}
+                                        {currentPlan === 1000 ? 'Ativo' : 'Contratar plano'}
                                     </Button>
                                 </HStack>
                             </CardBody>
@@ -419,12 +492,11 @@ export default function CreditsPage() {
                                     <Button
                                         colorScheme="brand"
                                         size="sm"
-                                        onClick={() => handleUpgradePlan(10000)}
-                                        isLoading={upgradingPlan === '10000'}
-                                        isDisabled={upgradingPlan !== null || currentPlan === 10000}
+                                        onClick={() => handleOpenPaymentModal(PLANS[2])}
+                                        isDisabled={currentPlan === 10000}
                                         variant={currentPlan === 10000 ? 'solid' : 'solid'}
                                     >
-                                        {currentPlan === 10000 ? 'Ativo' : 'Fazer Upgrade'}
+                                        {currentPlan === 10000 ? 'Ativo' : 'Contratar plano'}
                                     </Button>
                                 </HStack>
                             </CardBody>
@@ -460,12 +532,11 @@ export default function CreditsPage() {
                                     <Button
                                         colorScheme="brand"
                                         size="sm"
-                                        onClick={() => handleUpgradePlan(999999)}
-                                        isLoading={upgradingPlan === '999999'}
-                                        isDisabled={upgradingPlan !== null || currentPlan === 999999}
+                                        onClick={() => handleOpenPaymentModal(PLANS[3])}
+                                        isDisabled={currentPlan === 999999}
                                         variant={currentPlan === 999999 ? 'solid' : 'solid'}
                                     >
-                                        {currentPlan === 999999 ? 'Ativo' : 'Fazer Upgrade'}
+                                        {currentPlan === 999999 ? 'Ativo' : 'Contratar plano'}
                                     </Button>
                                 </HStack>
                             </CardBody>
@@ -483,6 +554,26 @@ export default function CreditsPage() {
                     ← Voltar ao Dashboard
                 </Button>
             </VStack>
+
+            {/* Modal de Pagamento */}
+            {selectedPlan && (
+                <PaymentModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    planId={selectedPlan.id}
+                    planName={selectedPlan.name}
+                    planValue={selectedPlan.price}
+                    userEmail={session?.user?.email || ''}
+                    userName={session?.user?.name || ''}
+                    onPaymentSuccess={handlePaymentSuccess}
+                    currentPlanValue={
+                        currentPlan === 100 ? 0 :
+                            currentPlan === 1000 ? 19.9 :
+                                currentPlan === 10000 ? 49.9 :
+                                    currentPlan === 999999 ? 99.9 : 0
+                    }
+                />
+            )}
         </Box>
     )
 }
