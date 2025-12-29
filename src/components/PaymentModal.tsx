@@ -63,45 +63,6 @@ export default function PaymentModal({
     const [cardCep, setCardCep] = useState('')
     const [addressNumber, setAddressNumber] = useState('')
     const [saveCard, setSaveCard] = useState(false)
-    const [cardNumberMasked, setCardNumberMasked] = useState(false)
-
-    // Função para mascarar número do cartão
-    const maskCardNumber = (cardNum: string): string => {
-        const cleaned = cardNum.replace(/\s|-/g, '')
-        if (cleaned.length < 4) return cardNum
-        const lastFour = cleaned.slice(-4)
-        return `XXXX XXXX XXXX ${lastFour}`
-    }
-
-    // Carregar dados salvos do localStorage quando o modal abre
-    useEffect(() => {
-        if (isOpen) {
-            try {
-                const savedCard = localStorage.getItem('ariaPlanCard')
-                if (savedCard) {
-                    const cardData = JSON.parse(savedCard)
-                    // Só carrega se for o mesmo email
-                    if (cardData.cardEmail === userEmail) {
-                        setCardHolderName(cardData.cardHolderName || '')
-                        // Mascarar o número do cartão
-                        setCardNumber(maskCardNumber(cardData.cardNumber || ''))
-                        setCardNumberMasked(true)
-                        setCardExpiryMonth(cardData.cardExpiryMonth || '')
-                        setCardExpiryYear(cardData.cardExpiryYear || '')
-                        setCardCpf(cardData.cardCpf || '')
-                        setCardPhone(cardData.cardPhone || '')
-                        setCardCep(cardData.cardCep || '')
-                        setAddressNumber(cardData.addressNumber || '')
-                    }
-                }
-            } catch (error) {
-                console.error('Erro ao carregar dados salvos:', error)
-            }
-        } else {
-            // Limpar máscara ao fechar modal
-            setCardNumberMasked(false)
-        }
-    }, [isOpen, userEmail])
 
     const handleClose = () => {
         if (!paymentProcessing) {
@@ -187,9 +148,7 @@ export default function PaymentModal({
         }
 
         const cleanedCardNumber = cardNumber.replace(/\D/g, '')
-        // Se o cartão está mascarado (do histórico), não precisa validar o número completo
-        // pois será usado o que foi salvo anteriormente
-        if (!cardNumberMasked && cleanedCardNumber.length !== 16) {
+        if (cleanedCardNumber.length !== 16) {
             toast({
                 title: 'Erro',
                 description: 'Número do cartão inválido (deve ter 16 dígitos)',
@@ -380,19 +339,8 @@ export default function PaymentModal({
             // Salvar dados do cartão se o usuário marcou a checkbox
             if (saveCard) {
                 try {
-                    const cardDataToSave = {
-                        cardHolderName: finalCardHolderName,
-                        cardNumber: formatCardNumber(cleanedCardNumber),
-                        cardExpiryMonth: cardExpiryMonth.padStart(2, '0'),
-                        cardExpiryYear: cardExpiryYear.slice(-2),
-                        cardCpf: formatCpf(cardCpf.replace(/\D/g, '')),
-                        cardEmail,
-                        cardPhone: formatPhone(cardPhone.replace(/\D/g, '')),
-                        cardCep: formatCep(cardCep.replace(/\D/g, '')),
-                        addressNumber,
-                    }
-                    localStorage.setItem('ariaPlanCard', JSON.stringify(cardDataToSave))
-                    console.log('✓ Dados do cartão salvos com sucesso')
+                    // Future: implement card saving functionality in backend
+                    console.log('✓ Dados do cartão marcados para salvar (funcionalidade future)')
                 } catch (error) {
                     console.error('Erro ao salvar dados do cartão:', error)
                 }
@@ -590,24 +538,6 @@ export default function PaymentModal({
                                     maxLength={19}
                                     disabled={paymentProcessing}
                                 />
-                                {cardNumberMasked && (
-                                    <HStack justify="space-between" mt={2}>
-                                        <Text fontSize="xs" color="gray.500">
-                                            Cartão carregado do histórico. Edite acima ou use um novo.
-                                        </Text>
-                                        <Button
-                                            size="xs"
-                                            variant="ghost"
-                                            colorScheme="red"
-                                            onClick={() => {
-                                                setCardNumber('')
-                                                setCardNumberMasked(false)
-                                            }}
-                                        >
-                                            Limpar histórico
-                                        </Button>
-                                    </HStack>
-                                )}
                             </FormControl>
 
                             <Grid templateColumns="1fr 1fr" gap={4} w="full">
