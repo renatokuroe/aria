@@ -690,7 +690,7 @@ export default function PaymentModal({
                                     Salvar dados do cartão para próximos upgrades/downgrades
                                 </Checkbox>
                                 <Text fontSize="xs" color="gray.500" mt={2} pl={6}>
-                                    O CVV não será salvo por motivos de segurança
+                                    CVV é sempre solicitado por motivos de segurança
                                 </Text>
                             </Box>
                         </VStack>
