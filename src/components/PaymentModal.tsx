@@ -268,8 +268,8 @@ export default function PaymentModal({
                 cardCpf: cardCpf.replace(/\D/g, ''),
             })
 
-            // Se é downgrade para Free, cancelar subscription antes
-            if (planValue === 0 && currentPlanValue && currentPlanValue > 0) {
+            // Se há plano anterior (seja downgrade para Free ou mudança entre planos pagos), cancelar subscription
+            if (currentPlanValue && currentPlanValue > 0) {
                 console.log('📋 Cancelando subscription anterior...')
                 try {
                     const cancelResponse = await fetch('/api/payment/cancel-subscription', {
@@ -295,7 +295,7 @@ export default function PaymentModal({
                 }
             }
 
-            // Se é downgrade, só chama o webhook sem fazer pagamento
+            // Se é downgrade para Free, não fazer pagamento
             if (planValue === 0) {
                 console.log('📋 Fazendo downgrade para Free...')
                 onPaymentSuccess()
