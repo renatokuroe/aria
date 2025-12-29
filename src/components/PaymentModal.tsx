@@ -599,12 +599,25 @@ export default function PaymentModal({
                                         setCardNumber(formatCardNumber(e.target.value))
                                     }}
                                     maxLength={19}
-                                    disabled={paymentProcessing || cardNumberMasked}
+                                    disabled={paymentProcessing}
                                 />
                                 {cardNumberMasked && (
-                                    <Text fontSize="xs" color="gray.500" mt={2}>
-                                        Cartão carregado do histórico. Digite um novo número se desejar alterar.
-                                    </Text>
+                                    <HStack justify="space-between" mt={2}>
+                                        <Text fontSize="xs" color="gray.500">
+                                            Cartão carregado do histórico. Edite acima ou use um novo.
+                                        </Text>
+                                        <Button
+                                            size="xs"
+                                            variant="ghost"
+                                            colorScheme="red"
+                                            onClick={() => {
+                                                setCardNumber('')
+                                                setCardNumberMasked(false)
+                                            }}
+                                        >
+                                            Limpar histórico
+                                        </Button>
+                                    </HStack>
                                 )}
                             </FormControl>
 
