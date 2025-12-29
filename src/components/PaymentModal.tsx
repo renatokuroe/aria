@@ -62,7 +62,6 @@ export default function PaymentModal({
     const [cardPhone, setCardPhone] = useState('')
     const [cardCep, setCardCep] = useState('')
     const [addressNumber, setAddressNumber] = useState('')
-    const [saveCard, setSaveCard] = useState(false)
 
     const handleClose = () => {
         if (!paymentProcessing) {
@@ -336,16 +335,6 @@ export default function PaymentModal({
 
             console.log('✓ Pagamento processado:', data)
 
-            // Salvar dados do cartão se o usuário marcou a checkbox
-            if (saveCard) {
-                try {
-                    // Future: implement card saving functionality in backend
-                    console.log('✓ Dados do cartão marcados para salvar (funcionalidade future)')
-                } catch (error) {
-                    console.error('Erro ao salvar dados do cartão:', error)
-                }
-            }
-
             toast({
                 title: 'Sucesso!',
                 description: 'Pagamento confirmado. Seu plano foi atualizado!',
@@ -599,18 +588,6 @@ export default function PaymentModal({
                             </Text>
 
                             <Box w="full" pt={2} borderTop="1px solid" borderColor="gray.200">
-                                <Checkbox
-                                    isChecked={saveCard}
-                                    onChange={(e) => setSaveCard(e.target.checked)}
-                                    isDisabled={paymentProcessing}
-                                    fontSize="sm"
-                                    spacing={3}
-                                >
-                                    Salvar dados do cartão para próximos upgrades/downgrades
-                                </Checkbox>
-                                <Text fontSize="xs" color="gray.500" mt={2} pl={6}>
-                                    CVV é sempre solicitado por motivos de segurança
-                                </Text>
                             </Box>
                         </VStack>
 
