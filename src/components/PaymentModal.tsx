@@ -300,19 +300,6 @@ export default function PaymentModal({
 
         setPaymentProcessing(true)
         try {
-            // Se está mascarado, precisa digitar um novo cartão
-            if (cardNumberMasked && cardNumber.includes('XXXX')) {
-                toast({
-                    title: 'Erro',
-                    description: 'Por favor, digite o número do cartão completo para continuar',
-                    status: 'error',
-                    duration: 3000,
-                    isClosable: true,
-                })
-                setPaymentProcessing(false)
-                return
-            }
-
             const cleanedCardNumber = cardNumber.replace(/\D/g, '')
             const finalCardHolderName = cardHolderName.trim() || userName || userEmail.split('@')[0]
 
