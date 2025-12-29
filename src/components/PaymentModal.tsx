@@ -536,6 +536,9 @@ export default function PaymentModal({
                                     value={cardEmail}
                                     onChange={(e) => setCardEmail(e.target.value)}
                                     disabled={paymentProcessing}
+                                    readOnly
+                                    cursor="not-allowed"
+                                    opacity={0.7}
                                 />
                             </FormControl>
 
