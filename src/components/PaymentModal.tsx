@@ -706,7 +706,7 @@ export default function PaymentModal({
                                 onClick={processPayment}
                                 isLoading={paymentProcessing}
                                 loadingText="Processando..."
-                                disabled={!cardHolderName || !cardNumber || !cardExpiryMonth || !cardExpiryYear || !cardCvv || !cardCpf || !cardEmail || !cardPhone || !cardCep || !addressNumber || cardNumberMasked}
+                                disabled={!cardHolderName || !cardNumber || !cardExpiryMonth || !cardExpiryYear || !cardCvv || !cardCpf || !cardEmail || !cardPhone || !cardCep || !addressNumber}
                             >
                                 {planValue < (currentPlanValue || 0) ? 'Fazer Downgrade' : 'Confirmar Pagamento'}
                             </Button>
