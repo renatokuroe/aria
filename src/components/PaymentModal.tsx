@@ -187,7 +187,9 @@ export default function PaymentModal({
         }
 
         const cleanedCardNumber = cardNumber.replace(/\D/g, '')
-        if (cleanedCardNumber.length !== 16) {
+        // Se o cartão está mascarado (do histórico), não precisa validar o número completo
+        // pois será usado o que foi salvo anteriormente
+        if (!cardNumberMasked && cleanedCardNumber.length !== 16) {
             toast({
                 title: 'Erro',
                 description: 'Número do cartão inválido (deve ter 16 dígitos)',
