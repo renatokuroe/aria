@@ -521,7 +521,6 @@ export default function PaymentModal({
                                     placeholder="4444 4444 4444 4444"
                                     value={cardNumber}
                                     onChange={(e) => {
-                                        setCardNumberMasked(false)
                                         setCardNumber(formatCardNumber(e.target.value))
                                     }}
                                     maxLength={19}
