@@ -131,8 +131,8 @@ export default function CreditsPage() {
             if (response.ok) {
                 // Atualizar plano ativo
                 setCurrentPlan(selectedPlan.messages)
-                // Resetar contagem de mensagens para o novo plano
-                setMessageCount(selectedPlan.messages)
+                // Resetar contagem de mensagens UTILIZADAS para 0
+                setMessageCount(0)
                 setSelectedPlan(null)
 
                 toast({
