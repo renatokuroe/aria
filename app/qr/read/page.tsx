@@ -130,12 +130,15 @@ export default function QRReader() {
                 {isConnected && !qrData && (
                     <Alert status="info" variant="left-accent">
                         <AlertIcon />
-                        <VStack align="flex-start" spacing={2}>
+                        <VStack align="flex-start" spacing={2} w="full">
                             <Text fontWeight="bold">Instância já conectada</Text>
                             <Text fontSize="sm">
                                 Esta instância já está conectada a um dispositivo WhatsApp.
                                 Para gerar um novo QR Code, você precisa desconectar primeiro.
                             </Text>
+                            <Button colorScheme="blue" size="sm" mt={2} onClick={() => router.push('/dashboard')}>
+                                Voltar para o Dashboard
+                            </Button>
                         </VStack>
                     </Alert>
                 )}
