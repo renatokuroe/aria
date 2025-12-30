@@ -190,9 +190,9 @@ export async function POST(request: NextRequest) {
         // Remover espaços e traços do número do cartão
         const cleanCardNumber = cardNumber.replace(/\s|-/g, '')
 
-        // Criar cobrança recorrente com cartão de crédito
-        // ASAAS requer creditCard e creditCardHolderInfo como objetos separados
-        const paymentPayload = {
+        // Criar assinatura recorrente (subscription) com cartão de crédito
+        // Usar endpoint /subscriptions para recorrências, não /payments
+        const subscriptionPayload = {
             customer: customerId,
             billingType: 'CREDIT_CARD',
             creditCard: {
@@ -212,54 +212,53 @@ export async function POST(request: NextRequest) {
             },
             cycle: 'MONTHLY', // Recorrência mensal
             value: parseFloat(String(planValue)),
-            dueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            nextDueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             description: `Plano ${planId} - ARIA (Recorrente)`,
             externalReference: userEmail.replace('@', '-'),
             notificationUrl: `https://${request.headers.get('host')}/api/payment/webhook`,
         }
 
-        console.log('📤 Enviando para ASAAS:', { ...paymentPayload, creditCard: { ...paymentPayload.creditCard, number: 'REDACTED' } })
+        console.log('📤 Enviando subscription para ASAAS:', { ...subscriptionPayload, creditCard: { ...subscriptionPayload.creditCard, number: 'REDACTED' } })
 
-        const paymentResponse = await fetch(`${ASAAS_API_URL}/payments`, {
+        const subscriptionResponse = await fetch(`${ASAAS_API_URL}/subscriptions`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'access_token': ASAAS_API_KEY,
             },
-            body: JSON.stringify(paymentPayload),
+            body: JSON.stringify(subscriptionPayload),
         })
 
-        console.log('📥 Response ASAAS Status:', paymentResponse.status)
+        console.log('📥 Response ASAAS Status:', subscriptionResponse.status)
 
-        if (!paymentResponse.ok) {
-            const errorData = await paymentResponse.json()
+        if (!subscriptionResponse.ok) {
+            const errorData = await subscriptionResponse.json()
             console.error('❌ Erro ASAAS:', {
-                status: paymentResponse.status,
-                statusText: paymentResponse.statusText,
+                status: subscriptionResponse.status,
+                statusText: subscriptionResponse.statusText,
                 errors: errorData?.errors,
                 fullError: JSON.stringify(errorData)
             })
             return NextResponse.json(
                 {
-                    error: 'Erro ao criar pagamento no ASAAS',
+                    error: 'Erro ao criar assinatura no ASAAS',
                     asaasError: errorData?.errors?.[0]?.description || errorData?.message || JSON.stringify(errorData),
                     details: errorData
                 },
-                { status: paymentResponse.status }
+                { status: subscriptionResponse.status }
             )
         }
 
-        const paymentData: AsaasPaymentResponse = await paymentResponse.json()
-        console.log('✓ Pagamento criado com sucesso:', paymentData.id)
-        console.log('✓ Subscription ID:', paymentData.subscription)
+        const subscriptionData = await subscriptionResponse.json()
+        console.log('✓ Assinatura criada com sucesso:', subscriptionData.id)
+        console.log('✓ Subscription ID:', subscriptionData.id)
 
         return NextResponse.json({
             success: true,
-            paymentId: paymentData.id,
-            subscriptionId: paymentData.subscription,
-            status: paymentData.status,
-            value: paymentData.value,
-            nextDueDate: paymentData.dateCreated,
+            subscriptionId: subscriptionData.id,
+            status: subscriptionData.status,
+            value: subscriptionData.value,
+            nextDueDate: subscriptionData.nextDueDate,
         })
     } catch (error) {
         console.error('Erro ao processar pagamento:', error)
