@@ -419,6 +419,11 @@ export default function PaymentModal({
                                         Renovação automática todo mês
                                     </Text>
                                 </HStack>
+                                <Box w="full" p={3} bg="orange.50" borderLeft="3px solid" borderColor="orange.400" borderRadius="sm">
+                                    <Text fontSize="xs" color="orange.800">
+                                        <strong>⚠️ Aviso:</strong> Ao migrar de plano, a subscription anterior será cancelada e as mensagens não utilizadas serão perdidas.
+                                    </Text>
+                                </Box>
                             </VStack>
                         </Box>
 
