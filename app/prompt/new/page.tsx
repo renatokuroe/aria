@@ -86,6 +86,23 @@ export default function NewPrompt() {
                         Não sabe por onde começar? Clique aqui e veja alguns exemplos prontos
                     </Text>
                 </VStack>
+
+                {/* Observação sobre produtos e preços */}
+                <VStack spacing={2} bg="blue.50" p={4} borderRadius="md" w="full" borderLeft="4px" borderColor="blue.500">
+                    <Heading size="sm" color="blue.900">💡 Dica: Adicione seus Produtos e Preços</Heading>
+                    <Text fontSize="sm" color="blue.800">
+                        Se você tem uma <strong>loja com produtos</strong>, um <strong>catálogo de serviços</strong>, ou uma <strong>tabela de preços</strong>, 
+                        adicione esses detalhes no prompt! A IA usará essas informações para responder aos clientes automaticamente.
+                    </Text>
+                    <Text fontSize="sm" color="blue.800">
+                        Exemplos:
+                    </Text>
+                    <Box bg="white" p={3} borderRadius="md" fontSize="xs" w="full" fontFamily="mono" color="blue.700">
+                        <Text>📦 Produtos: Camiseta R$ 49,90 | Calça R$ 99,90 | Jaqueta R$ 149,90</Text>
+                        <Text>💇 Serviços: Corte R$ 50 | Coloração R$ 150 | Progressiva R$ 200</Text>
+                        <Text>🍽️ Cardápio: Pizza Grande R$ 45 | Refrigerante R$ 8 | Sobremesa R$ 15</Text>
+                    </Box>
+                </VStack>
                 {loading ? (
                     <Spinner />
                 ) : (
