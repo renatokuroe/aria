@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
-import { Box, VStack, HStack, Heading, Text, Button, Card, CardBody, Spinner, useToast, useDisclosure } from '@chakra-ui/react'
+import { Box, VStack, HStack, Heading, Text, Button, Card, CardBody, Spinner, useToast, useDisclosure, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from '@chakra-ui/react'
 import Logo from '@/src/components/Logo'
 import PaymentModal from '@/src/components/PaymentModal'
 
@@ -26,6 +26,8 @@ export default function CreditsPage() {
     const toast = useToast()
     const { data: session } = useSession()
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isOpenCancelAlert, onOpen: onOpenCancelAlert, onClose: onCloseCancelAlert } = useDisclosure()
+    const cancelAlertRef = useRef(null)
 
     const [messageCount, setMessageCount] = useState<number | null>(null)
     const [currentPlan, setCurrentPlan] = useState<number | null>(null)
@@ -56,8 +58,9 @@ export default function CreditsPage() {
         }
 
         if (plan.price === 0) {
-            // Para o plano free, fazer upgrade direto
-            handleUpgradeFree(plan)
+            // Para o plano free, mostrar alerta de confirmação
+            setSelectedPlan(plan)
+            onOpenCancelAlert()
         } else {
             // Para planos pagos, abrir modal
             setSelectedPlan(plan)
@@ -577,6 +580,37 @@ export default function CreditsPage() {
                     }
                 />
             )}
+
+            {/* Alerta de confirmação para cancelamento de plano */}
+            <AlertDialog
+                isOpen={isOpenCancelAlert}
+                leastDestructiveRef={cancelAlertRef}
+                onClose={onCloseCancelAlert}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                            Cancelar Assinatura
+                        </AlertDialogHeader>
+                        <AlertDialogBody>
+                            Tem certeza que deseja cancelar sua assinatura? Suas mensagens restantes que foram contratadas serão perdidas.
+                        </AlertDialogBody>
+                        <AlertDialogFooter>
+                            <Button ref={cancelAlertRef} onClick={onCloseCancelAlert}>
+                                Manter Plano
+                            </Button>
+                            <Button colorScheme='red' onClick={() => {
+                                if (selectedPlan) {
+                                    handleUpgradeFree(selectedPlan)
+                                }
+                                onCloseCancelAlert()
+                            }} ml={3}>
+                                Cancelar Assinatura
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
         </Box>
     )
 }
