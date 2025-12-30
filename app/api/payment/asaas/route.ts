@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
         if (searchResponse.ok) {
             const searchData = await searchResponse.json()
             existingCustomers = searchData.data || []
-            
+
             if (existingCustomers.length > 0) {
                 // Customer já existe, usar o primeiro
                 customerId = existingCustomers[0].id
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
             }
         } else {
             console.warn('⚠️ Aviso ao buscar customers:', searchResponse.status)
-            
+
             // Se não conseguir buscar, tenta criar novo mesmo assim
             const customerPayload = {
                 name: finalCardHolderName,
