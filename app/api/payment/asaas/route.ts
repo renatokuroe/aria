@@ -86,47 +86,105 @@ export async function POST(request: NextRequest) {
 
         console.log('✓ API Key encontrada, criando pagamento...')
 
-        // Primeiro, criar ou obter customer
-        console.log('📋 Criando/obtendo customer...')
+        // Primeiro, buscar se customer já existe pelo email
+        console.log('📋 Verificando se customer já existe...')
 
-        const customerPayload = {
-            name: finalCardHolderName,
-            email: userEmail,
-            cpfCnpj: cardCpf, // Usar CPF fornecido pelo usuário
-        }
-
-        const customerResponse = await fetch(`${ASAAS_API_URL}/customers`, {
-            method: 'POST',
+        const searchResponse = await fetch(`${ASAAS_API_URL}/customers?email=${encodeURIComponent(userEmail)}`, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'access_token': ASAAS_API_KEY,
             },
-            body: JSON.stringify(customerPayload),
         })
 
         let customerId: string
-        if (customerResponse.ok) {
-            const customerData = await customerResponse.json()
-            customerId = customerData.id
-            console.log('✓ Customer criado/obtido:', customerId)
+        let existingCustomers = []
+
+        if (searchResponse.ok) {
+            const searchData = await searchResponse.json()
+            existingCustomers = searchData.data || []
+            
+            if (existingCustomers.length > 0) {
+                // Customer já existe, usar o primeiro
+                customerId = existingCustomers[0].id
+                console.log('✓ Customer existente encontrado:', customerId, '(', existingCustomers[0].name, ')')
+            } else {
+                // Customer não existe, criar novo
+                console.log('📋 Customer não existe, criando novo...')
+
+                const customerPayload = {
+                    name: finalCardHolderName,
+                    email: userEmail,
+                    cpfCnpj: cardCpf, // Usar CPF fornecido pelo usuário
+                }
+
+                const customerResponse = await fetch(`${ASAAS_API_URL}/customers`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'access_token': ASAAS_API_KEY,
+                    },
+                    body: JSON.stringify(customerPayload),
+                })
+
+                if (customerResponse.ok) {
+                    const customerData = await customerResponse.json()
+                    customerId = customerData.id
+                    console.log('✓ Customer criado:', customerId)
+                } else {
+                    const errorData = await customerResponse.json()
+                    console.error('❌ Erro ao criar customer:', {
+                        status: customerResponse.status,
+                        errors: errorData?.errors,
+                        message: errorData?.message,
+                        fullError: JSON.stringify(errorData)
+                    })
+
+                    // Retornar erro ao invés de usar ID alternativo
+                    return NextResponse.json(
+                        {
+                            error: 'Erro ao criar cliente na ASAAS',
+                            asaasError: errorData?.errors?.[0]?.description || errorData?.message || 'Erro ao processar dados do cliente',
+                            details: errorData
+                        },
+                        { status: customerResponse.status }
+                    )
+                }
+            }
         } else {
-            const errorData = await customerResponse.json()
-            console.error('❌ Erro ao criar customer:', {
-                status: customerResponse.status,
-                errors: errorData?.errors,
-                message: errorData?.message,
-                fullError: JSON.stringify(errorData)
+            console.warn('⚠️ Aviso ao buscar customers:', searchResponse.status)
+            
+            // Se não conseguir buscar, tenta criar novo mesmo assim
+            const customerPayload = {
+                name: finalCardHolderName,
+                email: userEmail,
+                cpfCnpj: cardCpf,
+            }
+
+            const customerResponse = await fetch(`${ASAAS_API_URL}/customers`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access_token': ASAAS_API_KEY,
+                },
+                body: JSON.stringify(customerPayload),
             })
 
-            // Retornar erro ao invés de usar ID alternativo
-            return NextResponse.json(
-                {
-                    error: 'Erro ao criar cliente na ASAAS',
-                    asaasError: errorData?.errors?.[0]?.description || errorData?.message || 'Erro ao processar dados do cliente',
-                    details: errorData
-                },
-                { status: customerResponse.status }
-            )
+            if (customerResponse.ok) {
+                const customerData = await customerResponse.json()
+                customerId = customerData.id
+                console.log('✓ Customer criado (fallback):', customerId)
+            } else {
+                const errorData = await customerResponse.json()
+                console.error('❌ Erro ao criar customer:', errorData)
+                return NextResponse.json(
+                    {
+                        error: 'Erro ao criar cliente na ASAAS',
+                        asaasError: errorData?.errors?.[0]?.description || errorData?.message || 'Erro desconhecido',
+                        details: errorData
+                    },
+                    { status: customerResponse.status }
+                )
+            }
         }
 
         // Remover espaços e traços do número do cartão
