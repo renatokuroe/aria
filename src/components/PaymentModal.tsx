@@ -620,7 +620,7 @@ export default function PaymentModal({
                                 Cancelar
                             </Button>
                             <Text fontSize="xs" color="gray.500" textAlign="center">
-                                Débito em conta automático no primeiro dia de cada mês
+                                Débito em conta automático a cada 30 dias
                             </Text>
                         </VStack>
                     </VStack>
