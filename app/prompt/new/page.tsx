@@ -87,6 +87,12 @@ export default function NewPrompt() {
                     </Text>
                 </VStack>
 
+                {loading ? (
+                    <Spinner />
+                ) : (
+                    <Textarea placeholder="Escreva seu prompt aqui" value={content} onChange={(e) => setContent(e.target.value)} minH="320px" />
+                )}
+
                 {/* Observação sobre produtos e preços */}
                 <VStack spacing={2} bg="blue.50" p={4} borderRadius="md" w="full" borderLeft="4px" borderColor="blue.500">
                     <Heading size="sm" color="blue.900">💡 Dica: Adicione seus Produtos e Preços</Heading>
@@ -103,11 +109,6 @@ export default function NewPrompt() {
                         <Text>🍽️ Cardápio: Pizza Grande R$ 45 | Refrigerante R$ 8 | Sobremesa R$ 15</Text>
                     </Box>
                 </VStack>
-                {loading ? (
-                    <Spinner />
-                ) : (
-                    <Textarea placeholder="Escreva seu prompt aqui" value={content} onChange={(e) => setContent(e.target.value)} minH="320px" />
-                )}
                 <VStack spacing={3} bg="green.50" p={4} borderRadius="md" w="full">
                     <Heading size="sm" color="green.900">O que é um Prompt?</Heading>
                     <Text fontSize="sm" color="green.800">
