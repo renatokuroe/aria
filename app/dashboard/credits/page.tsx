@@ -76,6 +76,33 @@ export default function CreditsPage() {
             setError(null)
             const emailWithoutAt = session.user.email.replace('@', ' ')
 
+            // Se há plano ativo (não é free), cancelar subscription no ASAAS primeiro
+            if (currentPlan && currentPlan > 100) {
+                console.log('📋 Cancelando subscription anterior antes de downgrade para Free...')
+                try {
+                    const cancelResponse = await fetch('/api/payment/cancel-subscription', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userEmail: session.user.email,
+                            currentPlanValue: currentPlan,
+                        }),
+                    })
+
+                    if (!cancelResponse.ok) {
+                        const cancelError = await cancelResponse.json()
+                        console.warn('⚠️ Aviso ao cancelar:', cancelError)
+                    } else {
+                        console.log('✓ Subscription cancelada com sucesso')
+                    }
+                } catch (error) {
+                    console.error('⚠️ Erro ao cancelar subscription:', error)
+                    // Continua mesmo assim
+                }
+            }
+
             const response = await fetch('https://n8n-panel.aria.social.br/webhook/manage', {
                 method: 'POST',
                 headers: {
@@ -94,9 +121,12 @@ export default function CreditsPage() {
             }
 
             setCurrentPlan(plan.messages)
+            // Reset message count para Free plan (100 messages)
+            setMessageCount(0)
 
             toast({
                 title: 'Plano atualizado com sucesso!',
+                description: 'Você voltou para o plano Free.',
                 status: 'success',
                 duration: 3000,
                 isClosable: true,
