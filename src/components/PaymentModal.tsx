@@ -421,7 +421,7 @@ export default function PaymentModal({
                                 </HStack>
                                 <Box w="full" p={3} bg="orange.50" borderLeft="3px solid" borderColor="orange.400" borderRadius="sm">
                                     <Text fontSize="xs" color="orange.800">
-                                        <strong>⚠️ Aviso:</strong> Ao migrar de plano, o plano anterior será cancelado e as mensagens não utilizadas serão perdidas.
+                                        <strong>⚠️ Aviso:</strong> Ao migrar de plano, o anterior contratado será cancelado e as mensagens não utilizadas serão perdidas.
                                     </Text>
                                 </Box>
                             </VStack>
