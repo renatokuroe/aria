@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Box, Button, Textarea, VStack, Heading, Text, Spinner, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter } from '@chakra-ui/react'
+import { Box, Button, Textarea, VStack, HStack, Heading, Text, Spinner, AlertDialog, AlertDialogOverlay, AlertDialogContent, AlertDialogHeader, AlertDialogBody, AlertDialogFooter, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useDisclosure, Card, CardBody } from '@chakra-ui/react'
+import { PROMPT_TEMPLATES } from '@/src/data/promptTemplates'
 
 export default function NewPrompt() {
     const defaultPrompt = "Converse de forma educada, clara e natural.\nAjude o cliente a encontrar produtos e tirar dúvidas.\nApresente opções quando fizer sentido.\nSeja objetiva e evite mensagens longas."
@@ -12,6 +13,7 @@ export default function NewPrompt() {
     const [showSuccess, setShowSuccess] = useState(false)
     const router = useRouter()
     const cancelRef = useRef(null)
+    const { isOpen: isOpenTemplates, onOpen: onOpenTemplates, onClose: onCloseTemplates } = useDisclosure()
 
     useEffect(() => {
         let mounted = true
@@ -61,6 +63,11 @@ export default function NewPrompt() {
         router.push('/dashboard')
     }
 
+    function handleSelectTemplate(templatePrompt: string) {
+        setContent(templatePrompt)
+        onCloseTemplates()
+    }
+
     return (
         <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg="white" py={12} px={6}>
             <VStack spacing={6} as="form" onSubmit={handleSendToEvolution} maxW="lg" w="full">
@@ -74,6 +81,9 @@ export default function NewPrompt() {
                     </Text>
                     <Text fontSize="md" color="gray.600">
                         Seja simples e direto.
+                    </Text>
+                    <Text fontSize="sm" color="blue.600" cursor="pointer" textDecoration="underline" onClick={onOpenTemplates}>
+                        Não sabe por onde começar? Clique aqui e veja alguns exemplos prontos
                     </Text>
                 </VStack>
                 {loading ? (
@@ -91,6 +101,39 @@ export default function NewPrompt() {
                     <Button type="submit" isLoading={sending} colorScheme="green" w="full">Confirmar</Button>
                 </VStack>
             </VStack>
+
+            {/* Modal de Prompts Pré-definidos */}
+            <Modal isOpen={isOpenTemplates} onClose={onCloseTemplates} size="2xl" isCentered scrollBehavior="inside">
+                <ModalOverlay />
+                <ModalContent maxH="90vh">
+                    <ModalHeader>
+                        <Heading size="md">Exemplos de Prompts por Segmento</Heading>
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={6}>
+                        <VStack spacing={4} align="stretch">
+                            {PROMPT_TEMPLATES.map((template, index) => (
+                                <Card key={index} borderLeft="4px" borderColor="green.500">
+                                    <CardBody>
+                                        <VStack align="start" spacing={2}>
+                                            <Heading size="sm" color="green.600">{template.segment}</Heading>
+                                            <Text fontSize="sm" color="gray.600">{template.description}</Text>
+                                            <Box bg="gray.50" p={3} borderRadius="md" w="full" fontSize="xs" color="gray.700" fontFamily="mono" maxH="120px" overflowY="auto">
+                                                {template.prompt.split('\n').map((line, i) => (
+                                                    <Text key={i}>{line}</Text>
+                                                ))}
+                                            </Box>
+                                            <Button size="sm" colorScheme="green" w="full" onClick={() => handleSelectTemplate(template.prompt)}>
+                                                Quero usar esse
+                                            </Button>
+                                        </VStack>
+                                    </CardBody>
+                                </Card>
+                            ))}
+                        </VStack>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
 
             <AlertDialog
                 isOpen={showSuccess}
