@@ -599,7 +599,7 @@ export default function CreditsPage() {
                             <Button ref={cancelAlertRef} onClick={onCloseCancelAlert}>
                                 Manter Plano
                             </Button>
-                            <Button colorScheme='red' onClick={() => {
+                            <Button bg="red.500" color="white" _hover={{ bg: 'red.600' }} onClick={() => {
                                 if (selectedPlan) {
                                     handleUpgradeFree(selectedPlan)
                                 }
