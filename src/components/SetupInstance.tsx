@@ -40,7 +40,7 @@ export default function SetupInstanceClient({ email }: { email: string }) {
             const res = await fetch('/api/evolution/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: digits, name: name.trim() }),
+                body: JSON.stringify({ phone: phone, name: name.trim() }),
             })
             const data = await res.json().catch(() => ({}))
             if (!res.ok) {
