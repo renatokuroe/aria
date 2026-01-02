@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/src/lib/auth'
+import { prisma } from '@/src/lib/prisma'
 
 const BASE = 'https://n8n-panel.aria.social.br/webhook/manage'
 
@@ -10,6 +11,7 @@ export async function POST(req: Request) {
 
     const body = await req.json()
     const phone = body.phone?.toString() || null
+    const name = body.name?.toString() || null
     const email = session.user?.email
     if (!email) return NextResponse.json({ error: 'User email missing' }, { status: 400 })
     if (!phone) return NextResponse.json({ error: 'Phone required' }, { status: 400 })
@@ -36,6 +38,21 @@ export async function POST(req: Request) {
     try {
         await callOp('CREATE_INSTANCE', { phoneNumber: phone })
         await callOp('SET_WEBHOOKS')
+        
+        // Salvar nome e telefone no banco de dados
+        try {
+            await prisma.user.update({
+                where: { email },
+                data: {
+                    ...(name && { name }),
+                    ...(phone && { phone }),
+                }
+            })
+        } catch (dbError) {
+            console.error('Erro ao salvar dados do usuário:', dbError)
+            // Continua mesmo se falhar ao salvar
+        }
+        
         // After setup, poll GET_QR_CODE a few times (short delay) until we find base64/dataUri or exhaust retries
         async function fetchQrWithRetries(attempts = 6, delayMs = 1500) {
             let lastResp: any = null

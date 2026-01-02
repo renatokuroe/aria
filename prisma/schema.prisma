@@ -13,6 +13,7 @@ model User {
   email     String   @unique
   password  String?
   name      String?
+  phone     String?
   credits   Int      @default(0)
   role      String   @default("user")
   prompts   Prompt[]

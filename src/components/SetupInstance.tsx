@@ -3,11 +3,12 @@
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import InputMask from 'react-input-mask'
-import { Box, Button, Input, VStack, Heading, Text, Image, Spinner, useToast } from '@chakra-ui/react'
+import { Box, Button, Input, VStack, Heading, Text, Image, Spinner, useToast, FormControl, FormLabel } from '@chakra-ui/react'
 import QRCode from 'react-qr-code'
 
 export default function SetupInstanceClient({ email }: { email: string }) {
     const router = useRouter()
+    const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
     const [loading, setLoading] = useState(false)
     const [qrData, setQrData] = useState<string | null>(null)
@@ -22,6 +23,12 @@ export default function SetupInstanceClient({ email }: { email: string }) {
         setLoading(true)
         setQrData(null)
 
+        if (!name.trim()) {
+            toast({ title: 'Nome obrigatório', status: 'error' })
+            setLoading(false)
+            return
+        }
+
         const digits = normalizePhone(phone)
         if (digits.length < 10) {
             toast({ title: 'Telefone inválido', status: 'error' })
@@ -33,7 +40,7 @@ export default function SetupInstanceClient({ email }: { email: string }) {
             const res = await fetch('/api/evolution/init', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone: digits }),
+                body: JSON.stringify({ phone: digits, name: name.trim() }),
             })
             const data = await res.json().catch(() => ({}))
             if (!res.ok) {
@@ -124,10 +131,22 @@ export default function SetupInstanceClient({ email }: { email: string }) {
         <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" bg="white" py={12} px={6}>
             {!qrData ? (
                 <VStack spacing={4} as="form" onSubmit={handleSubmit} maxW="md" w="full">
-                    <Heading size="md">Informe seu número de WhatsApp</Heading>
+                    <Heading size="md">Configure sua conta</Heading>
                     <Text>Usuário: {email}</Text>
 
-                    <Input as={InputMask} mask="(99) 99999-9999" value={phone} onChange={(e: any) => setPhone(e.target.value)} placeholder="(XX) XXXXX-XXXX" />
+                    <FormControl>
+                        <FormLabel color="title.900" fontWeight={600}>
+                            Nome de Usuário
+                        </FormLabel>
+                        <Input placeholder="Seu nome" value={name} onChange={(e: any) => setName(e.target.value)} />
+                    </FormControl>
+
+                    <FormControl>
+                        <FormLabel color="title.900" fontWeight={600}>
+                            Número de WhatsApp
+                        </FormLabel>
+                        <Input as={InputMask} mask="(99) 99999-9999" value={phone} onChange={(e: any) => setPhone(e.target.value)} placeholder="(XX) XXXXX-XXXX" />
+                    </FormControl>
 
                     <Button type="submit" colorScheme="green" isLoading={loading}>Próximo</Button>
 

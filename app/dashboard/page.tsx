@@ -37,6 +37,12 @@ export default function DashboardPage() {
             href: '/dashboard/credits',
             icon: '⭐',
         },
+        {
+            title: 'Editar Perfil',
+            description: 'Altere seu nome de usuário e senha',
+            href: '/dashboard/profile',
+            icon: '👤',
+        },
     ]
 
     return (

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/src/lib/auth'
 import { prisma } from '@/src/lib/prisma'
+import bcrypt from 'bcryptjs'
 
 // Middleware para verificar se é admin
 async function checkAdmin() {
@@ -43,6 +44,7 @@ export async function GET(
                 id: true,
                 email: true,
                 name: true,
+                phone: true,
                 role: true,
                 credits: true,
                 createdAt: true,
@@ -172,15 +174,25 @@ export async function PATCH(
 
     try {
         const body = await req.json()
-        const { name, role, credits } = body
+        const { name, role, credits, password, phone } = body
+
+        // Preparar dados para atualização
+        const updateData: any = {}
+        
+        if (name !== undefined) updateData.name = name
+        if (role !== undefined) updateData.role = role
+        if (credits !== undefined) updateData.credits = credits
+        if (phone !== undefined) updateData.phone = phone
+        
+        // Se uma nova senha foi fornecida, fazer hash dela
+        if (password && password.trim() !== '') {
+            const hashedPassword = bcrypt.hashSync(password, 10)
+            updateData.password = hashedPassword
+        }
 
         const user = await prisma.user.update({
             where: { id: params.id },
-            data: {
-                ...(name !== undefined && { name }),
-                ...(role !== undefined && { role }),
-                ...(credits !== undefined && { credits }),
-            }
+            data: updateData
         })
 
         return NextResponse.json(user)

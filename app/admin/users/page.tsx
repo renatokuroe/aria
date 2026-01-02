@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import InputMask from 'react-input-mask'
 import {
     Box,
     Container,
@@ -57,7 +58,7 @@ export default function AdminUsers() {
     const [loading, setLoading] = useState(true)
     const [selectedUser, setSelectedUser] = useState<User | null>(null)
     const [selectedUserDetails, setSelectedUserDetails] = useState<any>(null)
-    const [editFormData, setEditFormData] = useState({ name: '', role: '', credits: 0 })
+    const [editFormData, setEditFormData] = useState({ name: '', role: '', credits: 0, password: '', phone: '' })
     const [loadingDetails, setLoadingDetails] = useState(false)
     const toast = useToast()
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -110,15 +111,26 @@ export default function AdminUsers() {
             name: user.name || '',
             role: user.role,
             credits: user.credits,
+            password: '',
+            phone: '',
         })
 
-        // Buscar detalhes do usuário incluindo mensagens
+        // Buscar detalhes do usuário incluindo mensagens e telefone
         setLoadingDetails(true)
         try {
             const res = await fetch(`/api/admin/users/${user.id}`)
             if (res.ok) {
                 const details = await res.json()
+                console.log('Detalhes do usuário:', details)
                 setSelectedUserDetails(details)
+                // Atualizar o formulário com os dados completos
+                setEditFormData({
+                    name: details.name || '',
+                    role: details.role,
+                    credits: details.credits,
+                    password: '',
+                    phone: details.phone || '',
+                })
             }
         } catch (error) {
             console.error('Erro ao buscar detalhes:', error)
@@ -315,6 +327,20 @@ export default function AdminUsers() {
                             </FormControl>
 
                             <FormControl>
+                                <FormLabel>Telefone</FormLabel>
+                                <Input
+                                    as={InputMask}
+                                    mask="(99) 99999-9999"
+                                    type="tel"
+                                    placeholder="(11) 99999-9999"
+                                    value={editFormData.phone}
+                                    onChange={(e: any) =>
+                                        setEditFormData({ ...editFormData, phone: e.target.value })
+                                    }
+                                />
+                            </FormControl>
+
+                            <FormControl>
                                 <FormLabel>Role</FormLabel>
                                 <Select
                                     value={editFormData.role}
@@ -325,6 +351,18 @@ export default function AdminUsers() {
                                     <option value="user">Usuário</option>
                                     <option value="admin">Admin</option>
                                 </Select>
+                            </FormControl>
+
+                            <FormControl>
+                                <FormLabel>Senha (deixe em branco para não alterar)</FormLabel>
+                                <Input
+                                    type="password"
+                                    placeholder="Nova senha"
+                                    value={editFormData.password}
+                                    onChange={(e) =>
+                                        setEditFormData({ ...editFormData, password: e.target.value })
+                                    }
+                                />
                             </FormControl>
 
                             {loadingDetails ? (
