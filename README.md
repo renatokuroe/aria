@@ -49,6 +49,25 @@ ADMIN_KEY="sua-chave-admin"
 npx prisma migrate dev
 ```
 
+5. **[OPCIONAL] Criar usuário admin:**
+
+Para acessar o painel administrativo, você precisa de uma conta admin. Escolha uma das opções:
+
+**Criar novo admin:**
+```bash
+node scripts/create-admin.js seu-email@exemplo.com sua-senha "Seu Nome"
+```
+
+**Ou promover um usuário existente:**
+```bash
+node scripts/make-admin.js email-existente@exemplo.com
+```
+
+**Listar usuários:**
+```bash
+node scripts/list-users.js
+```
+
 5. Inicie o servidor de desenvolvimento:
 ```bash
 npm run dev

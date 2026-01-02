@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { signOut } from 'next-auth/react'
 import { Box, VStack, HStack, Heading, Text, Button, Grid, GridItem, Card, CardBody, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react'
 import Logo from '@/src/components/Logo'
+import AdminNavLink from '@/src/components/AdminNavLink'
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -110,6 +111,7 @@ export default function DashboardPage() {
                         <Button as="a" href="https://wa.me/5543984590248" target="_blank" variant="ghost" size="sm" colorScheme="brand">
                             Suporte
                         </Button>
+                        <AdminNavLink />
                         <Button
                             variant="ghost"
                             size="sm"

@@ -42,11 +42,12 @@ export const authOptions: NextAuthOptions = {
             if (user) {
                 token.id = (user as any).id
                 token.email = (user as any).email
+                token.role = (user as any).role
             }
             return token
         },
         async session({ session, token }) {
-            if (token) session.user = { id: token.id as string, email: token.email as string }
+            if (token) session.user = { id: token.id as string, email: token.email as string, role: token.role as string }
             return session
         },
     },
