@@ -108,9 +108,44 @@ export async function GET(
             // Continua mesmo se falhar
         }
 
+        // Buscar plano atual do webhook
+        let currentPlan = 0
+        try {
+            const emailWithoutAt = user.email.replace('@', ' ')
+            const planResponse = await fetch('https://n8n-panel.aria.social.br/webhook/manage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    operation: 'GET_PLAN',
+                    apiKey: 'EvoApiKeySecreta2025',
+                    instanceName: emailWithoutAt,
+                }),
+            })
+
+            if (planResponse.ok) {
+                const planData = await planResponse.json()
+                
+                // Tratar diferentes formatos de resposta
+                if (typeof planData === 'number' && planData > 0) {
+                    currentPlan = planData
+                } else if (typeof planData === 'string') {
+                    const parsed = parseInt(planData, 10)
+                    currentPlan = !isNaN(parsed) && parsed > 0 ? parsed : 0
+                } else if (typeof planData === 'object' && planData) {
+                    currentPlan = planData.plan || planData.Plan || planData.messageLimit || planData.planLimit || 0
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao buscar plano atual:', error)
+            // Continua mesmo se falhar
+        }
+
         return NextResponse.json({
             ...user,
-            messageCount
+            messageCount,
+            currentPlan
         })
     } catch (error) {
         console.error('Erro ao buscar usuário:', error)

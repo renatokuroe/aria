@@ -132,39 +132,6 @@ export default function AdminDashboard() {
                                     </Stat>
                                 </CardBody>
                             </Card>
-
-                            <Card bg="white" borderRadius="xl" shadow="md">
-                                <CardBody>
-                                    <Stat>
-                                        <StatLabel color="gray.600">Total de Prompts</StatLabel>
-                                        <StatNumber color="title.900" fontSize="3xl">
-                                            {stats.totalPrompts}
-                                        </StatNumber>
-                                    </Stat>
-                                </CardBody>
-                            </Card>
-
-                            <Card bg="white" borderRadius="xl" shadow="md">
-                                <CardBody>
-                                    <Stat>
-                                        <StatLabel color="gray.600">Total de Leituras QR</StatLabel>
-                                        <StatNumber color="title.900" fontSize="3xl">
-                                            {stats.totalQRReads}
-                                        </StatNumber>
-                                    </Stat>
-                                </CardBody>
-                            </Card>
-
-                            <Card bg="white" borderRadius="xl" shadow="md">
-                                <CardBody>
-                                    <Stat>
-                                        <StatLabel color="gray.600">Total de Créditos</StatLabel>
-                                        <StatNumber color="title.900" fontSize="3xl">
-                                            {stats.totalCredits.toLocaleString()}
-                                        </StatNumber>
-                                    </Stat>
-                                </CardBody>
-                            </Card>
                         </Grid>
                     )}
 

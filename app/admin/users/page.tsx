@@ -235,7 +235,6 @@ export default function AdminUsers() {
                                             <Th>Email</Th>
                                             <Th>Nome</Th>
                                             <Th>Role</Th>
-                                            <Th isNumeric>Créditos</Th>
                                             <Th>Criado em</Th>
                                             <Th>Ações</Th>
                                         </Tr>
@@ -253,7 +252,6 @@ export default function AdminUsers() {
                                                         {user.role}
                                                     </Badge>
                                                 </Td>
-                                                <Td isNumeric fontWeight="bold" color="brand.600">{user.credits}</Td>
                                                 <Td fontSize="sm" color="gray.500">
                                                     {new Date(user.createdAt).toLocaleDateString('pt-BR')}
                                                 </Td>
@@ -329,18 +327,6 @@ export default function AdminUsers() {
                                 </Select>
                             </FormControl>
 
-                            <FormControl>
-                                <FormLabel>Créditos</FormLabel>
-                                <Input
-                                    type="number"
-                                    value={editFormData.credits}
-                                    onChange={(e) =>
-                                        setEditFormData({ ...editFormData, credits: parseInt(e.target.value) || 0 })
-                                    }
-                                    min="0"
-                                />
-                            </FormControl>
-
                             {loadingDetails ? (
                                 <Box w="full" py={4} textAlign="center">
                                     <Spinner size="sm" color="brand.500" />
@@ -355,6 +341,12 @@ export default function AdminUsers() {
                                             <Text fontSize="sm" color="gray.600">Mensagens utilizadas:</Text>
                                             <Text fontSize="lg" fontWeight="bold" color="brand.600">
                                                 {selectedUserDetails.messageCount?.toLocaleString('pt-BR') || '0'}
+                                            </Text>
+                                        </HStack>
+                                        <HStack justify="space-between" w="full">
+                                            <Text fontSize="sm" color="gray.600">Plano atual:</Text>
+                                            <Text fontSize="lg" fontWeight="bold" color="brand.600">
+                                                {selectedUserDetails.currentPlan?.toLocaleString('pt-BR') || '0'}
                                             </Text>
                                         </HStack>
                                     </VStack>
