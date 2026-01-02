@@ -6,7 +6,7 @@ import { prisma } from '@/src/lib/prisma'
 // Middleware para verificar se é admin
 async function checkAdmin() {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user?.email) {
         return { isAdmin: false, user: null }
     }
@@ -35,11 +35,11 @@ export async function GET(req: NextRequest) {
 
     try {
         const totalUsers = await prisma.user.count()
-        
+
         const totalPrompts = await prisma.prompt.count()
-        
+
         const totalQRReads = await prisma.qRReading.count()
-        
+
         const totalCredits = await prisma.user.aggregate({
             _sum: {
                 credits: true

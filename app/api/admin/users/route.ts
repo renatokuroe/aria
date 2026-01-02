@@ -6,7 +6,7 @@ import { prisma } from '@/src/lib/prisma'
 // Middleware para verificar se é admin
 async function checkAdmin(req: NextRequest) {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user?.email) {
         return { isAdmin: false, user: null }
     }

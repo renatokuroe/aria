@@ -111,7 +111,7 @@ export default function AdminUsers() {
             role: user.role,
             credits: user.credits,
         })
-        
+
         // Buscar detalhes do usuário incluindo mensagens
         setLoadingDetails(true)
         try {
@@ -125,7 +125,7 @@ export default function AdminUsers() {
         } finally {
             setLoadingDetails(false)
         }
-        
+
         onOpen()
     }
 

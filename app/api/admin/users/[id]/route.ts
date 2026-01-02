@@ -6,7 +6,7 @@ import { prisma } from '@/src/lib/prisma'
 // Middleware para verificar se é admin
 async function checkAdmin() {
     const session = await getServerSession(authOptions)
-    
+
     if (!session?.user?.email) {
         return { isAdmin: false, user: null }
     }
@@ -88,7 +88,7 @@ export async function GET(
 
             if (countResponse.ok) {
                 const countData = await countResponse.json()
-                
+
                 // Tratar diferentes formatos de resposta
                 if (typeof countData === 'number') {
                     messageCount = countData
@@ -126,7 +126,7 @@ export async function GET(
 
             if (planResponse.ok) {
                 const planData = await planResponse.json()
-                
+
                 // Tratar diferentes formatos de resposta
                 if (typeof planData === 'number' && planData > 0) {
                     currentPlan = planData
@@ -214,6 +214,17 @@ export async function DELETE(
     }
 
     try {
+        // Deletar prompts associados ao usuário
+        await prisma.prompt.deleteMany({
+            where: { userId: params.id }
+        })
+
+        // Deletar QR readings associadas ao usuário
+        await prisma.qRReading.deleteMany({
+            where: { userId: params.id }
+        })
+
+        // Deletar o usuário
         await prisma.user.delete({
             where: { id: params.id }
         })

@@ -31,11 +31,11 @@ async function listUsers() {
 
         console.log(`\n📊 Total de ${users.length} usuário(s)\n`)
         console.log('┌──────────────────────────────────────────────────────────────────────────────┐')
-        
+
         users.forEach((user, index) => {
             const roleEmoji = user.role === 'admin' ? '👑' : '👤'
             const createdDate = new Date(user.createdAt).toLocaleDateString('pt-BR')
-            
+
             console.log(`│ ${index + 1}. ${roleEmoji} ${user.email}`)
             console.log(`│    Nome: ${user.name || '(sem nome)'}`)
             console.log(`│    Créditos: ${user.credits} | Prompts: ${user._count.prompts} | QR Reads: ${user._count.qrReads}`)
