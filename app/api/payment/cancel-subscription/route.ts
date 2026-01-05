@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // Production API - changed from sandbox to production
 const ASAAS_API_URL = 'https://api.asaas.com/v3'
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY
+const ASAAS_API_KEY = '$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmMwZWI5NjZlLTJhNzEtNDc2OS05MTQ2LTQzOGZmM2VkODc3ZDo6JGFhY2hfMjI1YmUwNjYtMzczNi00YmZkLWE2ZGUtZTY5YjU0YzBkODUx'
 
 interface CancelSubscriptionRequest {
     userEmail: string
