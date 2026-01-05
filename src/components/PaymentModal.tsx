@@ -91,7 +91,7 @@ export default function PaymentModal({
         const cleaned = value.replace(/\D/g, '')
         const formatted = cleaned
             .replace(/^(\d{2})(\d)/, '($1) $2')
-            .replace(/(\d{4})(\d)/, '$1-$2')
+            .replace(/(\d{5})(\d)/, '$1-$2')
         return formatted.substring(0, 15) // (11) 99999-9999
     }
 

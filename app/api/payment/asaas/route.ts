@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
             }
         } else {
             console.warn('⚠️ Aviso ao buscar customers:', searchResponse.status)
-            
+
             // Tentar ler o conteúdo da resposta para debug
             const responseText = await searchResponse.text()
             console.error('❌ Resposta da API:', responseText.substring(0, 500))
