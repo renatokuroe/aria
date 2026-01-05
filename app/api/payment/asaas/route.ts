@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Production API - changed from sandbox to production
-const ASAAS_API_URL = 'https://api.asaas.com/api/v3'
+const ASAAS_API_URL = 'https://api.asaas.com/v3'
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY
 const WEBHOOK_URL = 'https://n8n-panel.aria.social.br/webhook/manage'
 
@@ -99,6 +99,10 @@ export async function POST(request: NextRequest) {
         let customerId: string
         let existingCustomers = []
 
+        // Debug: Log da resposta
+        console.log('🔍 Search response status:', searchResponse.status)
+        console.log('🔍 Search response headers:', Object.fromEntries(searchResponse.headers))
+
         if (searchResponse.ok) {
             const searchData = await searchResponse.json()
             existingCustomers = searchData.data || []
@@ -152,6 +156,10 @@ export async function POST(request: NextRequest) {
             }
         } else {
             console.warn('⚠️ Aviso ao buscar customers:', searchResponse.status)
+            
+            // Tentar ler o conteúdo da resposta para debug
+            const responseText = await searchResponse.text()
+            console.error('❌ Resposta da API:', responseText.substring(0, 500))
 
             // Se não conseguir buscar, tenta criar novo mesmo assim
             const customerPayload = {
@@ -174,13 +182,12 @@ export async function POST(request: NextRequest) {
                 customerId = customerData.id
                 console.log('✓ Customer criado (fallback):', customerId)
             } else {
-                const errorData = await customerResponse.json()
-                console.error('❌ Erro ao criar customer:', errorData)
+                const customerResponseText = await customerResponse.text()
+                console.error('❌ Erro ao criar customer - resposta:', customerResponseText.substring(0, 500))
                 return NextResponse.json(
                     {
                         error: 'Erro ao criar cliente na ASAAS',
-                        asaasError: errorData?.errors?.[0]?.description || errorData?.message || 'Erro desconhecido',
-                        details: errorData
+                        details: `Status ${customerResponse.status}: ${customerResponseText.substring(0, 200)}`
                     },
                     { status: customerResponse.status }
                 )
