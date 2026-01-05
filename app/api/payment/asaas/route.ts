@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Using sandbox for now - change to production API when ready with production key
-const ASAAS_API_URL = 'https://sandbox.asaas.com/api/v3'
-const ASAAS_API_KEY = process.env.ASAAS_API_KEY || '$aact_hmlg_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjNmMTNiODFkLTE4YmUtNDM5OS1iZGE3LTM3ZDRkZTk0MzI2OTo6JGFhY2hfMWIxOGQ3MjItNWJjNy00MjU3LWIyM2UtNTEyMWEzNzI4ZGVm'
+// Production API - changed from sandbox to production
+const ASAAS_API_URL = 'https://api.asaas.com/api/v3'
+const ASAAS_API_KEY = process.env.ASAAS_API_KEY
 const WEBHOOK_URL = 'https://n8n-panel.aria.social.br/webhook/manage'
 
 // Debug: Log das variáveis de ambiente disponíveis
