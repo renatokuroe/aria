@@ -145,6 +145,33 @@ export default function CreditsPage() {
         try {
             const emailWithoutAt = session.user.email.replace('@', ' ')
 
+            // Se havia um plano anterior pago, cancelar antes de ativar o novo
+            if (currentPlan && currentPlan > 100 && selectedPlan.price > 0) {
+                console.log('📋 Cancelando subscription anterior para upgrade para novo plano pago...')
+                try {
+                    const cancelResponse = await fetch('/api/payment/cancel-subscription', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            userEmail: session.user.email,
+                            currentPlanValue: currentPlan,
+                        }),
+                    })
+
+                    if (!cancelResponse.ok) {
+                        const cancelError = await cancelResponse.json()
+                        console.warn('⚠️ Aviso ao cancelar subscription anterior:', cancelError)
+                    } else {
+                        console.log('✓ Subscription anterior cancelada com sucesso')
+                    }
+                } catch (error) {
+                    console.error('⚠️ Erro ao cancelar subscription anterior:', error)
+                    // Continua mesmo assim
+                }
+            }
+
             // Aguardar um pouco para o n8n processar
             await new Promise(resolve => setTimeout(resolve, 2000))
 
