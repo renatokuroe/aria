@@ -89,10 +89,9 @@ export default function PaymentModal({
     // Formatar telefone (adicionar máscara)
     const formatPhone = (value: string) => {
         const cleaned = value.replace(/\D/g, '')
-        const formatted = cleaned
-            .replace(/^(\d{2})(\d)/, '($1) $2')
-            .replace(/(\d{5})(\d)/, '$1-$2')
-        return formatted.substring(0, 15) // (11) 99999-9999
+        if (cleaned.length <= 2) return cleaned
+        if (cleaned.length <= 7) return `(${cleaned.substring(0, 2)}) ${cleaned.substring(2)}`
+        return `(${cleaned.substring(0, 2)}) ${cleaned.substring(2, 7)}-${cleaned.substring(7, 11)}`
     }
 
     // Formatar CEP

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+// Production API - changed from sandbox to production
 const ASAAS_API_URL = 'https://api.asaas.com/v3'
 const ASAAS_API_KEY = '$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmMwZWI5NjZlLTJhNzEtNDc2OS05MTQ2LTQzOGZmM2VkODc3ZDo6JGFhY2hfMjI1YmUwNjYtMzczNi00YmZkLWE2ZGUtZTY5YjU0YzBkODUx'
 const WEBHOOK_URL = 'https://n8n-panel.aria.social.br/webhook/manage'
@@ -198,68 +197,8 @@ export async function POST(request: NextRequest) {
         // Remover espaços e traços do número do cartão
         const cleanCardNumber = cardNumber.replace(/\s|-/g, '')
 
-        // PASSO 1: Criar um pagamento IMEDIATO para cobrar a primeira parcela agora
-        console.log('💳 PASSO 1: Criando pagamento imediato para a primeira parcela...')
-        
-        const immediatePaymentPayload = {
-            customer: customerId,
-            billingType: 'CREDIT_CARD',
-            creditCard: {
-                holderName: finalCardHolderName,
-                number: cleanCardNumber,
-                expiryMonth: cardExpiryMonth.padStart(2, '0'),
-                expiryYear: '20' + cardExpiryYear,
-                ccv: cardCvv,
-            },
-            creditCardHolderInfo: {
-                name: finalCardHolderName,
-                email: cardEmail,
-                cpfCnpj: cardCpf,
-                mobilePhone: cardPhone,
-                postalCode: cardCep,
-                addressNumber: addressNumber || '0',
-            },
-            value: parseFloat(String(planValue)),
-            dueDate: new Date().toISOString().split('T')[0], // Hoje mesmo
-            description: `Plano ${planId} - ARIA (Primeira Cobrança)`,
-            externalReference: userEmail.replace('@', '-') + '-payment-' + Date.now(),
-        }
-
-        console.log('📤 Enviando pagamento imediato para ASAAS:', { ...immediatePaymentPayload, creditCard: { ...immediatePaymentPayload.creditCard, number: 'REDACTED' } })
-
-        const immediatePaymentResponse = await fetch(`${ASAAS_API_URL}/payments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'access_token': ASAAS_API_KEY,
-            },
-            body: JSON.stringify(immediatePaymentPayload),
-        })
-
-        if (!immediatePaymentResponse.ok) {
-            const paymentError = await immediatePaymentResponse.json()
-            console.error('❌ Erro ao criar pagamento imediato:', {
-                status: immediatePaymentResponse.status,
-                errors: paymentError?.errors,
-                fullError: JSON.stringify(paymentError)
-            })
-            return NextResponse.json(
-                {
-                    error: 'Erro ao processar o pagamento do cartão',
-                    asaasError: paymentError?.errors?.[0]?.description || paymentError?.message || 'Falha na validação do cartão',
-                    details: paymentError
-                },
-                { status: immediatePaymentResponse.status }
-            )
-        }
-
-        const paymentData = await immediatePaymentResponse.json()
-        console.log('✓ Pagamento imediato criado:', paymentData.id)
-        console.log('  Status:', paymentData.status)
-
-        // PASSO 2: Criar subscription recorrente PARA OS PRÓXIMOS MESES
-        console.log('📋 PASSO 2: Criando subscription recorrente para os próximos meses...')
-
+        // Criar assinatura recorrente (subscription) com cartão de crédito
+        // Usar endpoint /subscriptions para recorrências, não /payments
         const subscriptionPayload = {
             customer: customerId,
             billingType: 'CREDIT_CARD',
@@ -267,7 +206,7 @@ export async function POST(request: NextRequest) {
                 holderName: finalCardHolderName,
                 number: cleanCardNumber,
                 expiryMonth: cardExpiryMonth.padStart(2, '0'),
-                expiryYear: '20' + cardExpiryYear,
+                expiryYear: '20' + cardExpiryYear, // Converte YY para YYYY
                 ccv: cardCvv,
             },
             creditCardHolderInfo: {
@@ -280,9 +219,9 @@ export async function POST(request: NextRequest) {
             },
             cycle: 'MONTHLY', // Recorrência mensal
             value: parseFloat(String(planValue)),
-            nextDueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 dias depois
+            nextDueDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0],
             description: `Plano ${planId} - ARIA (Recorrente)`,
-            externalReference: userEmail.replace('@', '-') + '-subscription',
+            externalReference: userEmail.replace('@', '-'),
             notificationUrl: `https://${request.headers.get('host')}/api/payment/webhook`,
         }
 
@@ -301,17 +240,15 @@ export async function POST(request: NextRequest) {
 
         if (!subscriptionResponse.ok) {
             const errorData = await subscriptionResponse.json()
-            console.error('❌ Erro ao criar subscription:', {
+            console.error('❌ Erro ASAAS:', {
                 status: subscriptionResponse.status,
                 statusText: subscriptionResponse.statusText,
                 errors: errorData?.errors,
                 fullError: JSON.stringify(errorData)
             })
-            console.warn('⚠️ AVISO: Pagamento imediato foi criado (ID: ' + paymentData.id + '), mas subscription falhou.')
             return NextResponse.json(
                 {
-                    error: 'Pagamento processado, mas falha ao configurar recorrência',
-                    paymentId: paymentData.id,
+                    error: 'Erro ao criar assinatura no ASAAS',
                     asaasError: errorData?.errors?.[0]?.description || errorData?.message || JSON.stringify(errorData),
                     details: errorData
                 },
@@ -320,29 +257,13 @@ export async function POST(request: NextRequest) {
         }
 
         const subscriptionData = await subscriptionResponse.json()
-        console.log('✓ Subscription criada com sucesso:', subscriptionData.id)
+        console.log('✓ Assinatura criada com sucesso:', subscriptionData.id)
         console.log('✓ Subscription ID:', subscriptionData.id)
-
-        // PASSO 3: Salvar o subscriptionId no banco de dados do usuário
-        console.log('💾 PASSO 3: Salvando subscriptionId no banco de dados...')
-        
-        try {
-            const updatedUser = await prisma.user.update({
-                where: { email: userEmail },
-                data: { asaasSubscriptionId: subscriptionData.id },
-            })
-            console.log('✓ SubscriptionId salvo para usuário:', updatedUser.id)
-        } catch (prismaError) {
-            console.error('❌ Erro ao salvar subscriptionId:', prismaError)
-            // Não falha aqui, pois o pagamento e subscription já foram criados
-        }
 
         return NextResponse.json({
             success: true,
-            paymentId: paymentData.id,
-            paymentStatus: paymentData.status,
             subscriptionId: subscriptionData.id,
-            subscriptionStatus: subscriptionData.status,
+            status: subscriptionData.status,
             value: subscriptionData.value,
             nextDueDate: subscriptionData.nextDueDate,
         })

@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 // Production API - changed from sandbox to production
 const ASAAS_API_URL = 'https://api.asaas.com/v3'
@@ -34,72 +37,83 @@ export async function POST(request: NextRequest) {
             )
         }
 
-        // Buscar subscriptions do cliente
-        const externalReference = userEmail.replace('@', '-')
+        // PASSO 1: Buscar o subscriptionId do usuário no banco de dados
+        console.log('🔍 PASSO 1: Buscando subscriptionId no banco de dados...')
 
-        console.log('🔍 Buscando subscriptions com externalReference:', externalReference)
-
-        const subscriptionsResponse = await fetch(
-            `${ASAAS_API_URL}/subscriptions?externalReference=${externalReference}`,
-            {
-                method: 'GET',
-                headers: {
-                    'access_token': ASAAS_API_KEY,
-                },
-            }
-        )
-
-        if (!subscriptionsResponse.ok) {
-            console.warn('⚠️ Erro ao buscar subscriptions:', subscriptionsResponse.status)
+        let user = null
+        try {
+            user = await prisma.user.findUnique({
+                where: { email: userEmail },
+            })
+        } catch (prismaError) {
+            console.error('❌ Erro ao buscar usuário no banco:', prismaError)
             return NextResponse.json(
-                { warning: 'Não foi possível buscar subscriptions' },
-                { status: 200 } // Retorna sucesso mesmo assim
+                { warning: 'Erro ao buscar usuário no banco' },
+                { status: 200 }
             )
         }
 
-        const subscriptionsData = await subscriptionsResponse.json()
-        const subscriptions = subscriptionsData.data || []
-
-        console.log(`📋 Encontradas ${subscriptions.length} subscriptions`)
-
-        if (subscriptions.length === 0) {
-            console.log('ℹ️ Nenhuma subscription encontrada para cancelar')
+        if (!user || !user.asaasSubscriptionId) {
+            console.log('ℹ️ Usuário não tem subscriptionId registrado')
             return NextResponse.json({
                 success: true,
                 message: 'Nenhuma subscription para cancelar',
             })
         }
 
-        // Cancelar todas as subscriptions ativas
-        let canceledCount = 0
-        for (const subscription of subscriptions) {
-            if (subscription.status === 'ACTIVE' || subscription.status === 'PENDING') {
-                console.log(`🔄 Cancelando subscription ${subscription.id}...`)
+        const subscriptionId = user.asaasSubscriptionId
+        console.log('✓ SubscriptionId encontrado:', subscriptionId)
 
-                const cancelResponse = await fetch(
-                    `${ASAAS_API_URL}/subscriptions/${subscription.id}`,
-                    {
-                        method: 'DELETE',
-                        headers: {
-                            'access_token': ASAAS_API_KEY,
-                        },
-                    }
-                )
+        // PASSO 2: Cancelar a subscription no Asaas
+        console.log('🔄 PASSO 2: Cancelando subscription no Asaas...')
 
-                if (cancelResponse.ok) {
-                    console.log(`✓ Subscription ${subscription.id} cancelada`)
-                    canceledCount++
-                } else {
-                    console.warn(`⚠️ Erro ao cancelar subscription ${subscription.id}:`, cancelResponse.status)
+        try {
+            const cancelResponse = await fetch(
+                `${ASAAS_API_URL}/subscriptions/${subscriptionId}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'access_token': ASAAS_API_KEY,
+                    },
                 }
-            }
-        }
+            )
 
-        return NextResponse.json({
-            success: true,
-            message: `${canceledCount} subscription(s) cancelada(s)`,
-            canceledCount,
-        })
+            if (cancelResponse.ok) {
+                console.log(`✓ Subscription ${subscriptionId} cancelada no Asaas`)
+                
+                // PASSO 3: Limpar o subscriptionId do banco
+                console.log('💾 PASSO 3: Limpando subscriptionId do banco...')
+                try {
+                    await prisma.user.update({
+                        where: { email: userEmail },
+                        data: { asaasSubscriptionId: null },
+                    })
+                    console.log('✓ SubscriptionId removido do banco')
+                } catch (prismaError) {
+                    console.error('⚠️ Erro ao limpar subscriptionId do banco:', prismaError)
+                }
+
+                return NextResponse.json({
+                    success: true,
+                    message: 'Subscription cancelada com sucesso',
+                    subscriptionId: subscriptionId,
+                })
+            } else {
+                const errorResponse = await cancelResponse.text()
+                console.warn(`⚠️ Erro ao cancelar subscription ${subscriptionId}:`, cancelResponse.status, errorResponse)
+                
+                return NextResponse.json(
+                    { warning: 'Erro ao cancelar subscription no Asaas' },
+                    { status: 200 } // Retorna sucesso mesmo assim para não bloquear o downgrade
+                )
+            }
+        } catch (error) {
+            console.error('❌ Erro ao cancelar subscription:', error)
+            return NextResponse.json(
+                { warning: 'Erro ao cancelar subscription' },
+                { status: 200 } // Retorna sucesso mesmo assim para não bloquear o downgrade
+            )
+        }
     } catch (error) {
         console.error('❌ Erro ao cancelar subscription:', error)
         return NextResponse.json(
