@@ -1,2 +1,2 @@
--- AlterTable
-ALTER TABLE "User" ADD COLUMN "asaasSubscriptionId" TEXT UNIQUE;
+-- AlterTable - Column already exists, migration marked as recovered
+-- ALTER TABLE "User" ADD COLUMN "asaasSubscriptionId" TEXT UNIQUE;
