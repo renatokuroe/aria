@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
 
             if (cancelResponse.ok) {
                 console.log(`✓ Subscription ${subscriptionId} cancelada no Asaas`)
-                
+
                 // PASSO 3: Limpar o subscriptionId do banco
                 console.log('💾 PASSO 3: Limpando subscriptionId do banco...')
                 try {
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
             } else {
                 const errorResponse = await cancelResponse.text()
                 console.warn(`⚠️ Erro ao cancelar subscription ${subscriptionId}:`, cancelResponse.status, errorResponse)
-                
+
                 return NextResponse.json(
                     { warning: 'Erro ao cancelar subscription no Asaas' },
                     { status: 200 } // Retorna sucesso mesmo assim para não bloquear o downgrade

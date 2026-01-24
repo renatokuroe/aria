@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
 
         // PASSO 1: Criar um pagamento IMEDIATO para cobrar a primeira parcela agora
         console.log('💳 PASSO 1: Criando pagamento imediato para a primeira parcela...')
-        
+
         const immediatePaymentPayload = {
             customer: customerId,
             billingType: 'CREDIT_CARD',
@@ -325,7 +325,7 @@ export async function POST(request: NextRequest) {
 
         // PASSO 3: Salvar o subscriptionId no banco de dados do usuário
         console.log('💾 PASSO 3: Salvando subscriptionId no banco de dados...')
-        
+
         try {
             const updatedUser = await prisma.user.update({
                 where: { email: userEmail },

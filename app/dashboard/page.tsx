@@ -5,18 +5,54 @@ import { authOptions } from '@/src/lib/auth'
 import { redirect, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { signOut } from 'next-auth/react'
-import { Box, VStack, HStack, Heading, Text, Button, Grid, GridItem, Card, CardBody, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react'
+import { Box, VStack, HStack, Heading, Text, Button, Grid, GridItem, Card, CardBody, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon } from '@chakra-ui/react'
 import Logo from '@/src/components/Logo'
 import AdminNavLink from '@/src/components/AdminNavLink'
 
 export default function DashboardPage() {
     const router = useRouter()
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isOpenFAQ, onOpen: onOpenFAQ, onClose: onCloseFAQ } = useDisclosure()
 
     async function handleLogout() {
         await signOut({ redirect: false })
         router.push('/auth/login')
     }
+
+    const faqItems = [
+        {
+            question: "É realmente grátis?",
+            answer: "Sim! Você começa 100% grátis no plano Free com até 100 mensagens/mês. Não precisa de cartão de crédito, sem burocracia. Você só paga quando quiser mais mensagens, fazendo um upgrade."
+        },
+        {
+            question: "Preciso de conhecimento técnico?",
+            answer: "Não! Aria foi feita para ser simples e intuitiva. Se você consegue usar WhatsApp, consegue usar a Aria. Todos os passos são claros e diretos, com exemplos prontos para você personalizar."
+        },
+        {
+            question: "Quanto tempo leva para configurar?",
+            answer: "De poucos minutos! É bem rápido: cadastro, leitura do QR code, escolha de um modelo pronto, personalização rápida e pronto para usar. Você coloca em funcionamento no mesmo dia."
+        },
+        {
+            question: "Posso escolher um exemplo pronto?",
+            answer: "Sim! Você tem exemplos como 'Atendimento de Clientes', 'Dúvidas Frequentes' e 'Agendamento' que já vêm com tudo configurado. É só editar com suas informações e está pronto para usar."
+        },
+        {
+            question: "Como a IA sabe como responder?",
+            answer: "A IA aprende com os documentos e instruções que você fornece. Você controla completamente como ela deve se comportar e responder. É como ter um atendente bem treinado disponível 24/7."
+        },
+        {
+            question: "Qual plano devo escolher?",
+            answer: "Comece com o Free! Testando você descobrirá se precisa de mais. Quando atingir o limite de 100 mensagens/mês, é fácil fazer upgrade para Pro (R$ 19,90), Business (R$ 49,90) ou Enterprise (R$ 99,90)."
+        },
+        {
+            question: "Como as mensagens são contadas?",
+            answer: "Cada mensagem enviada pela IA conta como uma. O assistente responde após 3 minutos em que o usuário manda uma ou mais mensagens. Então se alguém manda 5 mensagens, o assistente aguarda 3 minutos e responde uma vez (conta como 1 mensagem da IA)."
+        },
+        {
+            question: "Qual é a diferença para outros chatbots?",
+            answer: "Ótima pergunta! Enquanto chatbots comuns são robóticos e limitados, a Aria compreende linguagem natural, aprende a partir de seus próprios materiais e oferece respostas contextualizadas como faria um atendente humano. É automação com toque humanizado."
+        }
+    ]
 
     const menuItems = [
         {
@@ -114,6 +150,14 @@ export default function DashboardPage() {
                         Precisa de ajuda? Entre em contato com nosso suporte
                     </Text>
                     <HStack spacing={4} justify="center">
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            colorScheme="brand"
+                            onClick={onOpenFAQ}
+                        >
+                            Dúvidas Frequentes
+                        </Button>
                         <Button as="a" href="https://wa.me/5543984590248" target="_blank" variant="ghost" size="sm" colorScheme="brand">
                             Suporte
                         </Button>
@@ -144,7 +188,35 @@ export default function DashboardPage() {
                         <Button variant="ghost" onClick={onClose} colorScheme="gray">
                             Cancelar
                         </Button>
-                        <Button
+                    
+
+            {/* FAQ Modal */}
+            <Modal isOpen={isOpenFAQ} onClose={onCloseFAQ} size="lg" isCentered>
+                <ModalOverlay backdropFilter="blur(4px)" />
+                <ModalContent borderRadius="xl" shadow="xl" maxH="80vh" overflowY="auto">
+                    <ModalHeader color="title.900" fontWeight={700}>
+                        ❓ Dúvidas Frequentes
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody pb={6}>
+                        <Accordion allowToggle>
+                            {faqItems.map((item, index) => (
+                                <AccordionItem key={index}>
+                                    <AccordionButton>
+                                        <Box flex="1" textAlign="left" fontWeight={600} color="title.900">
+                                            {item.question}
+                                        </Box>
+                                        <AccordionIcon />
+                                    </AccordionButton>
+                                    <AccordionPanel pb={4} color="gray.700">
+                                        {item.answer}
+                                    </AccordionPanel>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </ModalBody>
+                </ModalContent>
+            </Modal>    <Button
                             colorScheme="brand"
                             onClick={handleLogout}
                         >
