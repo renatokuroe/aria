@@ -58,7 +58,9 @@ export default function RegisterPage() {
                 <Logo size="xl" />
                 <VStack spacing={1} textAlign="center">
                     <Heading size="lg">Criar Conta</Heading>
-                    <Text color="gray.600">Comece a usar o Aria agora</Text>
+                    <Text color="orange.600" fontSize="sm" bg="orange.50" p={3} borderRadius="md">
+                        💡 <strong>Recomendamos usar um computador</strong> para esta etapa. Nas próximas, você precisará ler um QR code com o celular para vincular seu WhatsApp.
+                    </Text>
                 </VStack>
 
                 <VStack spacing={4} as="form" onSubmit={handleSubmit} w="full">
