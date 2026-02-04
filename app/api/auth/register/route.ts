@@ -3,9 +3,10 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '@/src/lib/prisma'
 
 export async function POST(req: Request) {
-    const body = await req.json()
-    const email = (body.email || '').toString().trim().toLowerCase()
-    const password = (body.password || '').toString()
+    try {
+        const body = await req.json()
+        const email = (body.email || '').toString().trim().toLowerCase()
+        const password = (body.password || '').toString()
 
     if (!email || !password) return NextResponse.json({ error: 'Campos obrigatórios' }, { status: 400 })
     if (!email.includes('@')) return NextResponse.json({ error: 'Email inválido' }, { status: 400 })
@@ -19,4 +20,8 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({ data: { email, password: hashed } })
 
     return NextResponse.json({ ok: true, id: user.id })
+    } catch (error: any) {
+        console.error('Erro ao criar usuário:', error)
+        return NextResponse.json({ error: 'Erro ao criar conta' }, { status: 500 })
+    }
 }

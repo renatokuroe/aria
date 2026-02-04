@@ -29,4 +29,4 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 ENV NODE_ENV=production
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate || true && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy || true && node server.js"]

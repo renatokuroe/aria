@@ -150,9 +150,9 @@ export default function DashboardPage() {
                         Precisa de ajuda? Entre em contato com nosso suporte
                     </Text>
                     <HStack spacing={4} justify="center">
-                        <Button 
-                            variant="ghost" 
-                            size="sm" 
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             colorScheme="brand"
                             onClick={onOpenFAQ}
                         >
@@ -188,35 +188,35 @@ export default function DashboardPage() {
                         <Button variant="ghost" onClick={onClose} colorScheme="gray">
                             Cancelar
                         </Button>
-                    
 
-            {/* FAQ Modal */}
-            <Modal isOpen={isOpenFAQ} onClose={onCloseFAQ} size="lg" isCentered>
-                <ModalOverlay backdropFilter="blur(4px)" />
-                <ModalContent borderRadius="xl" shadow="xl" maxH="80vh" overflowY="auto">
-                    <ModalHeader color="title.900" fontWeight={700}>
-                        ❓ Dúvidas Frequentes
-                    </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody pb={6}>
-                        <Accordion allowToggle>
-                            {faqItems.map((item, index) => (
-                                <AccordionItem key={index}>
-                                    <AccordionButton>
-                                        <Box flex="1" textAlign="left" fontWeight={600} color="title.900">
-                                            {item.question}
-                                        </Box>
-                                        <AccordionIcon />
-                                    </AccordionButton>
-                                    <AccordionPanel pb={4} color="gray.700">
-                                        {item.answer}
-                                    </AccordionPanel>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>    <Button
+
+                        {/* FAQ Modal */}
+                        <Modal isOpen={isOpenFAQ} onClose={onCloseFAQ} size="lg" isCentered>
+                            <ModalOverlay backdropFilter="blur(4px)" />
+                            <ModalContent borderRadius="xl" shadow="xl" maxH="80vh" overflowY="auto">
+                                <ModalHeader color="title.900" fontWeight={700}>
+                                    ❓ Dúvidas Frequentes
+                                </ModalHeader>
+                                <ModalCloseButton />
+                                <ModalBody pb={6}>
+                                    <Accordion allowToggle>
+                                        {faqItems.map((item, index) => (
+                                            <AccordionItem key={index}>
+                                                <AccordionButton>
+                                                    <Box flex="1" textAlign="left" fontWeight={600} color="title.900">
+                                                        {item.question}
+                                                    </Box>
+                                                    <AccordionIcon />
+                                                </AccordionButton>
+                                                <AccordionPanel pb={4} color="gray.700">
+                                                    {item.answer}
+                                                </AccordionPanel>
+                                            </AccordionItem>
+                                        ))}
+                                    </Accordion>
+                                </ModalBody>
+                            </ModalContent>
+                        </Modal>    <Button
                             colorScheme="brand"
                             onClick={handleLogout}
                         >
