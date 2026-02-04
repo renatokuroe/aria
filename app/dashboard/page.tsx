@@ -68,6 +68,12 @@ export default function DashboardPage() {
             icon: '📱',
         },
         {
+            title: 'Gerenciar Anexo',
+            description: 'Envie PDFs que a IA compartilhará',
+            href: '/dashboard/attachments',
+            icon: '📎',
+        },
+        {
             title: 'Créditos & Upgrade',
             description: 'Verifique seus créditos e planos',
             href: '/dashboard/credits',
