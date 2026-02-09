@@ -36,7 +36,7 @@ export default function DebugProfile() {
                 <Heading>Debug - Dados do Perfil</Heading>
                 <Text>Email da sessão: <strong>{session?.user?.email}</strong></Text>
                 <Button onClick={fetchDebugData} isLoading={loading}>Recarregar Dados</Button>
-                
+
                 {data && (
                     <>
                         <Box w="full" bg="gray.100" p={4} borderRadius="md">
@@ -44,7 +44,7 @@ export default function DebugProfile() {
                                 {JSON.stringify(data, null, 2)}
                             </Code>
                         </Box>
-                        
+
                         {data.userFromDb && (
                             <Box w="full">
                                 <Heading size="sm" mb={2}>Dados do Usuário:</Heading>

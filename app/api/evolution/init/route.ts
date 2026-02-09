@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     try {
         await callOp('CREATE_INSTANCE', { phoneNumber: phone })
         await callOp('SET_WEBHOOKS')
-        
+
         // Salvar nome e telefone no banco de dados
         try {
             await prisma.user.update({
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
             console.error('Erro ao salvar dados do usuário:', dbError)
             // Continua mesmo se falhar ao salvar
         }
-        
+
         // After setup, poll GET_QR_CODE a few times (short delay) until we find base64/dataUri or exhaust retries
         async function fetchQrWithRetries(attempts = 6, delayMs = 1500) {
             let lastResp: any = null

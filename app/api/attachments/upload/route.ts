@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     try {
         const session = await getServerSession(authOptions)
         console.log('Session:', session?.user?.email)
-        
+
         if (!session?.user?.email) {
             return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
         }
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
         const text = await n8nResponse.text()
         console.log('N8N Response text:', text)
-        
+
         let result
         try {
             result = text ? JSON.parse(text) : { success: true }
@@ -69,7 +69,7 @@ export async function POST(req: Request) {
             console.log('N8N retornou resposta não-JSON:', text)
             result = { success: true, message: text }
         }
-        
+
         console.log('Sucesso N8N:', result)
         return NextResponse.json({ ok: true, result })
     } catch (error: any) {

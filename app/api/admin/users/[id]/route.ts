@@ -178,12 +178,12 @@ export async function PATCH(
 
         // Preparar dados para atualização
         const updateData: any = {}
-        
+
         if (name !== undefined) updateData.name = name
         if (role !== undefined) updateData.role = role
         if (credits !== undefined) updateData.credits = credits
         if (phone !== undefined) updateData.phone = phone
-        
+
         // Se uma nova senha foi fornecida, fazer hash dela
         if (password && password.trim() !== '') {
             const hashedPassword = bcrypt.hashSync(password, 10)
