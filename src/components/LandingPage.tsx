@@ -95,8 +95,27 @@ export default function LandingPage() {
                             Em poucos instantes, você conecta a Inteligência Artificial ao WhatsApp da sua empresa e coloca um assistente virtual em funcionamento. Nada de configurações extensas ou processos demorados — aqui, tudo acontece com agilidade e precisão.
                         </Text>
                         <Button as="a" href="/auth/register" colorScheme="brand" size="lg">
-                            Começar agora
+                            Assine nosso plano gratuito
                         </Button>
+                    </VStack>
+                </Container>
+            </Box>
+
+            {/* Sem Necessidade de Cartão de Crédito */}
+            <Box
+                py={36}
+                bg="#2e7d32"
+                w="100vw"
+                marginLeft="calc(-50vw + 50%)"
+            >
+                <Container maxW="7xl">
+                    <VStack spacing={6} textAlign="center">
+                        <Heading size="2xl" color="white" fontWeight="bold">
+                            Não precisa do cartão de crédito!
+                        </Heading>
+                        <Text fontSize="2xl" color="white" maxW="800px" mx="auto">
+                            Quer usar nosso plano <strong>gratuito</strong> e tem medo de cobranças inesperadas na sua fatura? Não se preocupe, você pode assinar o plano gratuito da Aria sem a <strong>necessidade de cadastrar o seu cartão</strong> de crédito!
+                        </Text>
                     </VStack>
                 </Container>
             </Box>
