@@ -236,7 +236,7 @@ export default function LandingPage() {
                                 {[
                                     "Perda de oportunidades por demora em responder ou atendimento limitado ao horário comercial?",
                                     "Baixa taxa de comparecimento ou esquecimento de reuniões e serviços?",
-                                    "Falta de prova social e poucas recomendações online?",
+                                    "Dificuldade em gerenciar a comunicação com parceiros, clientes e fornecedores?",
                                 ].map((item, index) => (
                                     <Box
                                         key={index}
@@ -295,7 +295,7 @@ export default function LandingPage() {
 
             {/* Features */}
             {/* Conecte seu WhatsApp em segundos */}
-            <Box position="relative" py={{ base: 12, md: 20 }} mt={12}>
+            <Box position="relative" py={{ base: 12, md: 0 }} mt={2}>
                 <Container maxW="7xl">
                     <Box
                         bg="white"
