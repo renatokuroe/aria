@@ -37,7 +37,6 @@ export default function LandingPage() {
                     </HStack>
                 </Container>
             </Box>
-
             {/* Hero com Banner ao Fundo */}
             <Box
                 position="relative"
@@ -217,7 +216,295 @@ export default function LandingPage() {
                 </Container>
             </Box>
 
+            {/* Problemas x Soluções */}
+            <Box py={20} bg="white">
+                <Container maxW="7xl">
+                    <VStack spacing={10}>
+                        <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={10} w="100%">
+                            <VStack spacing={6} align="stretch">
+                                <Box
+                                    bg="linear-gradient(90deg, #1b5e20 0%, #00c853 100%)"
+                                    color="white"
+                                    py={4}
+                                    px={6}
+                                    borderRadius="lg"
+                                    textAlign="center"
+                                >
+                                    <Heading size="md" color="white">Sua empresa sofre com isso?</Heading>
+                                </Box>
+
+                                {[
+                                    "Perda de oportunidades por demora em responder ou atendimento limitado ao horário comercial?",
+                                    "Baixa taxa de comparecimento ou esquecimento de reuniões e serviços?",
+                                    "Falta de prova social e poucas recomendações online?",
+                                ].map((item, index) => (
+                                    <Box
+                                        key={index}
+                                        bg="#fff1f1"
+                                        border="1px solid"
+                                        borderColor="#f87171"
+                                        borderRadius="md"
+                                        px={6}
+                                        py={5}
+                                        textAlign="center"
+                                    >
+                                        <Text fontSize="lg" color="gray.800">{item}</Text>
+                                    </Box>
+                                ))}
+                            </VStack>
+
+                            <VStack spacing={6} align="stretch">
+                                <Box
+                                    bg="linear-gradient(90deg, #1b5e20 0%, #00c853 100%)"
+                                    color="white"
+                                    py={4}
+                                    px={6}
+                                    borderRadius="lg"
+                                    textAlign="center"
+                                >
+                                    <Heading size="md" color="white">A ARIA soluciona com inteligência:</Heading>
+                                </Box>
+
+                                {[
+                                    "Automação total de conversas e agendamentos via IA com tecnologia ChatGPT.",
+                                    "Notificações inteligentes e lembretes automáticos enviados por WhatsApp.",
+                                    "Coleta de feedback automatizada com incentivo direto para avaliações no Google.",
+                                ].map((item, index) => (
+                                    <Box
+                                        key={index}
+                                        bg="#e9f7ef"
+                                        border="1px solid"
+                                        borderColor="#2e7d32"
+                                        borderRadius="md"
+                                        px={6}
+                                        py={5}
+                                        textAlign="center"
+                                    >
+                                        <Text fontSize="lg" color="gray.800">{item}</Text>
+                                    </Box>
+                                ))}
+                            </VStack>
+                        </Grid>
+
+                        <Button as="a" href="/auth/login" colorScheme="brand" size="md">
+                            Teste agora
+                        </Button>
+                    </VStack>
+                </Container>
+            </Box>
+
             {/* Features */}
+            {/* Conecte seu WhatsApp em segundos */}
+            <Box position="relative" py={{ base: 12, md: 20 }} mt={12}>
+                <Container maxW="7xl">
+                    <Box
+                        bg="white"
+                        border="1px solid"
+                        borderColor="gray.200"
+                        borderRadius="2xl"
+                        boxShadow="md"
+                        px={{ base: 6, md: 10 }}
+                        py={{ base: 10, md: 12 }}
+                    >
+                        <Grid templateColumns={{ base: '1fr', md: '1fr 1fr' }} alignItems="center" gap={12}>
+                            <VStack align="start" spacing={6} maxW="lg">
+                                <Heading size="2xl" color="title.900">
+                                    Conecte seu WhatsApp em alguns segundos!
+                                </Heading>
+                                <Text fontSize="lg" color="gray.700">
+                                    Conecte o seu número do WhatsApp, envie os arquivos necessários e defina instruções personalizadas para o seu Assistente de I.A. Aumente a eficiência do seu atendimento e automatize processos com uma solução que trabalha 24 horas por dia, 7 dias por semana, para o seu negócio.
+                                </Text>
+                                <Button as="a" href="/auth/login" variant="outline" colorScheme="brand" size="lg">
+                                    Testar agora
+                                </Button>
+                            </VStack>
+                            <Box position="relative" w="100%" h={{ base: '320px', md: '420px' }}>
+                                <Image
+                                    src="/img-connect.webp"
+                                    alt="Conexão WhatsApp"
+                                    borderRadius="xl"
+                                    boxShadow="lg"
+                                    w="100%"
+                                    h="100%"
+                                    objectFit="cover"
+                                />
+                                <Box
+                                    position="absolute"
+                                    bottom={0}
+                                    left={0}
+                                    w="100%"
+                                    bg="rgba(0, 128, 0, 0.85)"
+                                    borderBottomRadius="xl"
+                                    py={4}
+                                    px={6}
+                                    display="flex"
+                                    flexDirection="column"
+                                    gap={2}
+                                >
+                                    <Text fontWeight="bold" color="white" fontSize="md">
+                                        A assistente de <span style={{ fontWeight: 'bold' }}>Inteligência Artificial</span> que torna sua vida mais <span style={{ fontWeight: 'bold' }}>fácil</span>
+                                    </Text>
+                                    <Box bg="white" borderRadius="md" p={3} mt={2} boxShadow="md">
+                                        <Text color="green.900" fontWeight="bold" fontSize="lg">
+                                            Tenha um atendente que <span style={{ color: '#388e3c' }}>trabalha 24 horas</span> por dia. Tenha a ARIA!
+                                        </Text>
+                                    </Box>
+                                </Box>
+                            </Box>
+                        </Grid>
+                    </Box>
+                </Container>
+            </Box>
+            {/* Planos */}
+            <Box
+                position="relative"
+                bgImage="url('/bg-connect.webp')"
+                bgRepeat="no-repeat"
+                bgSize="cover"
+                bgPosition="center"
+                py={{ base: 16, md: 20 }}
+            >
+                <Box position="absolute" inset={0} bg="rgba(18, 70, 28, 0.75)" />
+                <Container maxW="7xl" position="relative" zIndex={1}>
+                    <VStack spacing={3} textAlign="center" color="white" mb={{ base: 8, md: 10 }}>
+                        <Heading size="2xl" color="white">Cabe dentro do seu bolso!</Heading>
+                        <Text fontSize="xl">Confira os planos</Text>
+                    </VStack>
+
+                    <Box
+                        bg="rgba(255, 255, 255, 0.85)"
+                        borderRadius="xl"
+                        px={{ base: 4, md: 8 }}
+                        py={{ base: 6, md: 10 }}
+                        boxShadow="xl"
+                    >
+                        <Grid templateColumns={{ base: '1fr', md: 'repeat(4, 1fr)' }} gap={6} alignItems="stretch">
+                            {[
+                                {
+                                    tag: 'Básico',
+                                    price: 'Grátis',
+                                    subtitle: 'Até 100 mensagens por mês',
+                                },
+                                {
+                                    tag: 'Pro',
+                                    price: 'R$19,90',
+                                    subtitle: 'Até 1.000 mensagens/mês',
+                                    badge: 'Mais popular',
+                                },
+                                {
+                                    tag: 'Business',
+                                    price: '49,90',
+                                    subtitle: 'Até 10.000 mensagens/mês',
+                                },
+                                {
+                                    tag: 'Enterprise',
+                                    price: '99,90',
+                                    subtitle: 'Mensagens ilimitadas',
+                                },
+                            ].map((plan, i) => (
+                                <Box
+                                    key={i}
+                                    role="group"
+                                    bg="white"
+                                    color="green.900"
+                                    borderRadius="xl"
+                                    boxShadow="md"
+                                    border="1px solid"
+                                    borderColor="green.200"
+                                    px={6}
+                                    py={6}
+                                    display="flex"
+                                    flexDirection="column"
+                                    gap={4}
+                                    transition="all 0.2s ease"
+                                    _hover={{
+                                        bg: 'green.500',
+                                        color: 'white',
+                                        borderColor: 'green.500',
+                                        transform: 'translateY(-4px)'
+                                    }}
+                                >
+                                    <Box
+                                        alignSelf="center"
+                                        px={4}
+                                        py={1}
+                                        borderRadius="full"
+                                        border="1px solid"
+                                        borderColor="green.300"
+                                        fontSize="xs"
+                                        fontWeight="bold"
+                                        textTransform="uppercase"
+                                        bg="transparent"
+                                        color="green.600"
+                                        _groupHover={{
+                                            bg: 'white',
+                                            borderColor: 'white',
+                                            color: 'green.600'
+                                        }}
+                                    >
+                                        {plan.tag}
+                                    </Box>
+
+                                    <VStack spacing={1} align="start">
+                                        <Heading size="lg" color="green.700" _groupHover={{ color: 'white' }}>
+                                            {plan.price}
+                                            <Text as="span" fontSize="sm" fontWeight="normal">
+                                                /mês
+                                            </Text>
+                                        </Heading>
+                                        <Text fontSize="sm" color="green.700" _groupHover={{ color: 'green.50' }}>
+                                            {plan.subtitle}
+                                        </Text>
+                                        {plan.badge && (
+                                            <Text fontSize="xs" color="green.700" _groupHover={{ color: 'green.50' }}>
+                                                {plan.badge}
+                                            </Text>
+                                        )}
+                                    </VStack>
+
+                                    <VStack spacing={3} align="start" fontSize="sm" color="green.700" _groupHover={{ color: 'green.50' }}>
+                                        <HStack>
+                                            <Box w="18px" h="18px" borderRadius="full" bg="gray.300" flexShrink={0} />
+                                            <Text>Funciona 24 horas por dia, 7 dias por semana.</Text>
+                                        </HStack>
+                                        <HStack>
+                                            <Box w="18px" h="18px" borderRadius="full" bg="gray.300" flexShrink={0} />
+                                            <Text>Responde de forma natural.</Text>
+                                        </HStack>
+                                        <HStack>
+                                            <Box w="18px" h="18px" borderRadius="full" bg="gray.300" flexShrink={0} />
+                                            <Text>Raciocina e entende diferentes contextos.</Text>
+                                        </HStack>
+                                        <HStack>
+                                            <Box w="18px" h="18px" borderRadius="full" bg="gray.300" flexShrink={0} />
+                                            <Text>Responde com base nas informações fornecidas sobre a sua empresa, sendo capaz de tirar dúvidas e dar informações.</Text>
+                                        </HStack>
+                                    </VStack>
+
+                                    <Button
+                                        as="a"
+                                        href="/auth/login"
+                                        bg="green.700"
+                                        color="white"
+                                        border="1px solid"
+                                        borderColor="green.700"
+                                        borderRadius="full"
+                                        mt="auto"
+                                        _groupHover={{
+                                            bg: 'white',
+                                            color: 'green.700',
+                                            borderColor: 'white'
+                                        }}
+                                    >
+                                        Teste agora!
+                                    </Button>
+                                </Box>
+                            ))}
+                        </Grid>
+                    </Box>
+                </Container>
+            </Box>
+
             <Box bg="gradient.light" py={20}>
                 <Container maxW="7xl">
                     <VStack spacing={12}>
@@ -290,7 +577,7 @@ export default function LandingPage() {
                             <HStack spacing={8}>
                                 <Button onClick={onOpenPrices} variant="link" size="md" color="white">Preços</Button>
                                 <Button onClick={onOpen} variant="link" size="md" color="white">Como funciona?</Button>
-                                <Button as="a" href="https://wa.me/5543984590248" target="_blank" variant="link" size="md" color="white">Contato</Button>
+                                <Button as="a" href="https://wa.me/5543999790374" target="_blank" variant="link" size="md" color="white">Contato</Button>
                             </HStack>
                         </HStack>
 
@@ -305,7 +592,7 @@ export default function LandingPage() {
                             <VStack spacing={2}>
                                 <Button onClick={onOpenPrices} variant="link" size="md" color="white">Preços</Button>
                                 <Button onClick={onOpen} variant="link" size="md" color="white">Como funciona?</Button>
-                                <Button as="a" href="https://wa.me/5543984590248" target="_blank" variant="link" size="md" color="white">Contato</Button>
+                                <Button as="a" href="https://wa.me/5543999790374" target="_blank" variant="link" size="md" color="white">Contato</Button>
                             </VStack>
                         </VStack>
                     </VStack>
